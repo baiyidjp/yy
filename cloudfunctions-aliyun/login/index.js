@@ -6,26 +6,29 @@ exports.main = async (event, context) => {
 		return false
 	}
 	
-	const db = uniCloud.database()
+	const openidUrl = `https://api.weixin.qq.com/sns/jscode2session?appid=wx39bdc15715f29e38&secret=92adab0b74194c5b55f6847c909381c6&js_code=${code}&grant_type=authorization_code`
 	
-	const authUrl = `https://api.weixin.qq.com/sns/jscode2session?appid=wx39bdc15715f29e38&secret=92adab0b74194c5b55f6847c909381c6&js_code=${code}&grant_type=authorization_code`
-	
-	const authResult = await uniCloud.httpclient.request(authUrl, {
+	const openidResult = await uniCloud.httpclient.request(openidUrl, {
 		method:'GET',
 		dataType: 'json'
 	})
-	const openid = authResult.data.openid
-
-	const authList = await db.collection('auth_list').where({
+	const openid = openidResult.data.openid
+	
+	const db = uniCloud.database()
+	
+	let users = await db.collection('user_list').where({
 		openid: openid
-	})
-	
-	// const authOpenids = authList.map(item => {
-	// 	return item.openid
-	// })
-		
-	// console.log(authResult, authOpenids);
-	
-	return authList ? true : false
-	
+	}).get()
+	// 返回当前用户的对象
+	let user = {
+		openid: openid,
+		name: '',
+		phone: '',
+		approved: false
+	}
+	// 如果在后台有记录则返回记录的用户对象
+	if (users.data.length > 0) {
+		user = users.data[0]
+	}
+	return user
 };

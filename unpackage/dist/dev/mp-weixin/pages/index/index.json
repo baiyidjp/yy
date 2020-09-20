@@ -1,4 +1,8 @@
 {
-  "navigationBarTitleText": "uni-app",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "usingComponents": {
+    "u-loading": "/node-modules/uview-ui/components/u-loading/u-loading",
+    "u-button": "/node-modules/uview-ui/components/u-button/u-button"
+  }
 }

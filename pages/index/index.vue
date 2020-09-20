@@ -1,8 +1,15 @@
 <template>
-	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
-			<text class="title">{{title}}</text>
+	<view class="wrap">
+		<view v-if="!user">
+			<u-loading></u-loading>
+			<text class="loadTitle">正在检测账号权限</text>
+		</view>
+		<view v-else-if="!user.approved">
+			<text>当前账号没有权限,如已申请,可点击刷新</text>
+			<view class="buttons">
+				<u-button class="refresh" type="warning" @click="checkAccess">刷新</u-button>
+				<u-button type="primary" :disabled="user.name.length > 0" @click="onClickAccess">申请</u-button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -11,60 +18,65 @@
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				user: null
 			}
 		},
 		onLoad() {
-			uni.login({
-				provider: 'weixin',
-				success: function(loginRes) {
-					console.log(loginRes);
-					uniCloud.callFunction({
-						name: 'login',
-						data: {
-							code: loginRes.code
-						}
-					}).then(res => {
-						console.log(res.result.data);
-					})
-				},
-				fail: (error) => {
-					console.log(error);
-				}
-			})
+			this.checkAccess()
 		},
 		methods: {
-			decryptPhoneNumber(e) {
-				console.log(e);
+			checkAccess () {
+				const self = this
+				self.user = null;
+				// 取出微信的code
+				uni.login({
+					provider: 'weixin',
+					success: loginRes => {
+						// 取出当前用户的信息
+						uniCloud.callFunction({
+							name: 'login',
+							data: {
+								code: loginRes.code
+							}
+						}).then(res => {
+							self.user = res.result
+							if (self.user.approved) {
+								// 有权限使用小程序 跳转首页
+							}
+							// 无权限使用小程序 提示申请
+						})
+					},
+					fail: (error) => {
+						console.log(error);
+					}
+				})
+			},
+			onClickAccess () {
+				uni.navigateTo({
+					url: `../access_request/access_request?openid=${this.user.openid}`
+				})
 			}
 		}
 	}
 </script>
 
-<style>
-	.content {
+<style lang="scss" scoped>
+	.wrap {
+		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
+	.loadTitle {
+		margin-left: 10px;
 	}
-
-	.text-area {
+	.buttons {
 		display: flex;
 		justify-content: center;
+		margin-top: 10px;
 	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
+	.buttons .refresh {
+		margin-right: 10px;
 	}
 </style>
