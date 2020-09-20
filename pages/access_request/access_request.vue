@@ -14,6 +14,7 @@
 </template>
 
 <script>
+	import { mapGetters } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -38,15 +39,16 @@
 				}
 			}
 		},
-		onLoad(option) {
-			this.user.openid = option.openid
-		},
 		onReady() {
 			this.$refs.userForm.setRules(this.rules);
+		},
+		computed: {
+			...mapGetters(['openid'])
 		},
 		methods: {
 			onClickSubmit() {
 				const self = this
+				self.user.openid = self.openid
 				this.$refs.userForm.validate(valid => {
 					if (valid) {
 						uniCloud.callFunction({

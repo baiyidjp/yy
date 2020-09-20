@@ -11,21 +11,29 @@
 				<u-button type="primary" :disabled="user.name.length > 0" @click="onClickAccess">申请</u-button>
 			</view>
 		</view>
+		<view v-else-if="user.approved">
+			<u-loading></u-loading>
+			<text class="loadTitle">正在拉取数据</text>
+		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		mapMutations
+	} from 'vuex'
 	export default {
 		data() {
 			return {
 				user: null
 			}
 		},
-		onLoad() {
+		onShow() {
 			this.checkAccess()
 		},
 		methods: {
-			checkAccess () {
+			...mapMutations(['UPDATEOPENID', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST']),
+			checkAccess() {
 				const self = this
 				self.user = null;
 				// 取出微信的code
@@ -40,10 +48,33 @@
 							}
 						}).then(res => {
 							self.user = res.result
+							self.UPDATEOPENID({
+								openid: self.user.openid
+							})
 							if (self.user.approved) {
-								// 有权限使用小程序 跳转首页
+								uniCloud.callFunction({
+									name: 'all_data',
+									data: {
+										openid: self.user.openid
+									}
+								}).then(res => {
+									console.log(res.result);
+									const result = res.result
+									self.UPDATECOMPANYLIST({
+										companyList: result.companyList.data
+									})
+									self.UPDATECLIENTLIST({
+										companyList: result.clientList.data
+									})
+									self.UPDATECHANNELLIST({
+										companyList: result.channelList.data
+									})
+									// 有权限使用小程序 跳转首页
+									uni.switchTab({
+										url: '../company_list/company_list'
+									})
+								})
 							}
-							// 无权限使用小程序 提示申请
 						})
 					},
 					fail: (error) => {
@@ -51,9 +82,9 @@
 					}
 				})
 			},
-			onClickAccess () {
+			onClickAccess() {
 				uni.navigateTo({
-					url: `../access_request/access_request?openid=${this.user.openid}`
+					url: '../access_request/access_request'
 				})
 			}
 		}
@@ -68,14 +99,17 @@
 		align-items: center;
 		justify-content: center;
 	}
+
 	.loadTitle {
 		margin-left: 10px;
 	}
+
 	.buttons {
 		display: flex;
 		justify-content: center;
 		margin-top: 10px;
 	}
+
 	.buttons .refresh {
 		margin-right: 10px;
 	}

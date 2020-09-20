@@ -5,8 +5,10 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
-		openid: '',
-		companyList: []
+		openid: null,
+		companyList: null,
+		clientList: null,
+		channelList: null
 	},
 	getters: {
 		openid: state => {
@@ -17,12 +19,23 @@ const store = new Vuex.Store({
 		}
 	},
 	mutations: {
+		UPDATEOPENID (state, payload) {
+			state.openid = payload.openid
+		},
 		UPDATECOMPANYLIST (state, payload) {
-			state.companyList = payload.data
+			state.companyList = payload.companyList
+		},
+		ADDCOMPANY (state, payload) {
+			state.companyList = [...state.companyList, payload.company]
+		},
+		UPDATECLIENTLIST (state, payload) {
+			state.clientList = payload.clientList
+		},
+		UPDATECHANNELLIST (state, payload) {
+			state.channelList = payload.channelList
 		}
 	},
 	actions: {
-		
 	}
 })
 

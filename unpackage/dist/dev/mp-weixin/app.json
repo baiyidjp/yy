@@ -1,7 +1,10 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/access_request/access_request"
+    "pages/access_request/access_request",
+    "pages/company_list/company_list",
+    "pages/company_list/company_add",
+    "pages/my/my"
   ],
   "subPackages": [],
   "window": {
@@ -9,6 +12,26 @@
     "navigationBarTitleText": "灵活用工小助手",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#2979ff",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/company_list/company_list",
+        "iconPath": "static/logo.png",
+        "selectedIconPath": "static/logo.png",
+        "text": "列表"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "iconPath": "static/logo.png",
+        "selectedIconPath": "static/logo.png",
+        "text": "我的"
+      }
+    ]
   },
   "usingComponents": {}
 }

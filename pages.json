@@ -15,6 +15,21 @@
 			"style": {
 				"navigationBarTitleText": "申请权限"
 			}
+		}, {
+			"path": "pages/company_list/company_list",
+			"style": {
+				"navigationBarTitleText": "税源地列表"
+			}
+		}, {
+			"path": "pages/company_list/company_add",
+			"style": {
+				"navigationBarTitleText": "添加税源地"
+			}
+		}, {
+			"path": "pages/my/my",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
 		}
 	],
 	"globalStyle": {
@@ -22,5 +37,22 @@
 		"navigationBarTitleText": "灵活用工小助手",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#2979ff",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+			"pagePath": "pages/company_list/company_list",
+			"iconPath": "static/logo.png",
+			"selectedIconPath": "static/logo.png",
+			"text": "列表"
+		}, {
+			"pagePath": "pages/my/my",
+			"iconPath": "static/logo.png",
+			"selectedIconPath": "static/logo.png",
+			"text": "我的"
+		}]
 	}
 }
