@@ -28,6 +28,9 @@ const store = new Vuex.Store({
 		ADDCOMPANY (state, payload) {
 			state.companyList = [...state.companyList, payload.company]
 		},
+		UPDATECOMPANY (state, payload) {
+			state.companyList[payload.index] = payload.company
+		},
 		UPDATECLIENTLIST (state, payload) {
 			state.clientList = payload.clientList
 		},

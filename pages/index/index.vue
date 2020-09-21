@@ -1,6 +1,6 @@
 <template>
 	<view class="wrap">
-		<view v-if="!user">
+		<view class="load-wrap" v-if="!user">
 			<u-loading></u-loading>
 			<text class="loadTitle">正在检测账号权限</text>
 		</view>
@@ -11,7 +11,7 @@
 				<u-button type="primary" :disabled="user.name.length > 0" @click="onClickAccess">申请</u-button>
 			</view>
 		</view>
-		<view v-else-if="user.approved">
+		<view class="load-wrap" v-else-if="user.approved">
 			<u-loading></u-loading>
 			<text class="loadTitle">正在拉取数据</text>
 		</view>
@@ -98,6 +98,12 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.load-wrap {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.loadTitle {

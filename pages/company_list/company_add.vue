@@ -2,7 +2,7 @@
 	<view class="wrap">
 		<u-form class="form-wrap" :model="company" ref="companyForm" label-width="200" label-position="top">
 			<u-form-item label="税源地名称:" prop="companyName">
-				<u-input type="number" v-model="company.companyName" placeholder="请输入税源地名称" />
+				<u-input v-model="company.companyName" placeholder="请输入税源地名称" />
 			</u-form-item>
 			<u-form-item label="税源地服务费(小数):" prop="serviceCharge">
 				<u-input type="number" v-model="company.serviceCharge" placeholder="请输入税源地服务费(小数)" />
@@ -14,7 +14,7 @@
 				<u-input type="number" v-model="company.tax" placeholder="请输入税源地个税(小数)" />
 			</u-form-item>
 		</u-form>
-		<u-button class="submitButton" @click="onClickSubmit" type="primary">提交</u-button>
+		<u-button class="submitButton" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
 		<u-toast ref="uToast"/>
 	</view>
 </template>
@@ -29,11 +29,13 @@
 			return {
 				company: {
 					companyName: '',
-					serviceCharge: 0,
-					serviceChargeSmall: 0,
-					tax: 0,
+					serviceCharge: '',
+					serviceChargeSmall: '',
+					tax: '0.015',
 					openid: ''
 				},
+				index: null,
+				isEdit: false,
 				rules: {
 					companyName: [{
 						required: true,
@@ -56,48 +58,82 @@
 						message: '请输入税源地个税(小数)',
 						trigger: ['change', 'blur']
 					}],
-				}
+				},
+				submiting: false
+			}
+		},
+		onLoad(option) {
+			if (option.index) {
+				this.index = option.index
+				this.company = this.companyList[option.index]
+				this.isEdit = true
 			}
 		},
 		onReady() {
 			this.$refs.companyForm.setRules(this.rules);
+			if (this.isEdit) {
+				uni.setNavigationBarTitle({
+					title: '编辑税源地'
+				})
+			}
 		},
 		computed: {
-			...mapGetters(['openid'])
+			...mapGetters(['openid', 'companyList'])
 		},
 		methods: {
-			...mapMutations(['ADDCOMPANY']),
+			...mapMutations(['ADDCOMPANY', 'UPDATECOMPANY']),
 			onClickSubmit() {
 				const self = this
+				self.submiting = true
 				self.company.openid = self.openid
 				this.$refs.companyForm.validate(valid => {
 					if (valid) {
-						uniCloud.callFunction({
-							name: 'company_list',
-							data: {
-								type: 'add',
-								company: self.company
-							}
-						}).then(res => {
-							if (res.result) {
-								self.ADDCOMPANY({
+						if (self.isEdit) {
+							uniCloud.callFunction({
+								name: 'company_list',
+								data: {
+									type: 'update',
 									company: self.company
-								})
-								self.$refs.uToast.show({
-									title: '添加成功',
-									type: 'success'
-								})
-								setTimeout(() => {
-									uni.navigateBack()
-								}, 1000)
-							}
-						})
+								}
+							}).then(res => {
+								if (res.result) {
+									self.showToast()
+								}
+							})
+						} else {
+							uniCloud.callFunction({
+								name: 'company_list',
+								data: {
+									type: 'add',
+									company: self.company
+								}
+							}).then(res => {
+								if (res.result.id) {
+									self.company._id = res.result.id
+									self.ADDCOMPANY({
+										company: self.company
+									})
+									self.showToast()
+								}
+							})
+						}
 					} else {
+						self.submiting = false
 						console.log('验证失败');
 					}
 				});
+			},
+			showToast() {
+				this.$refs.uToast.show({
+					title: this.isEdit ? '更新成功' : '添加成功',
+					type: 'success'
+				})
+				setTimeout(() => {
+					this.submiting = false
+					uni.navigateBack()
+				}, 500)
 			}
-		},
+		}
 	}
 </script>
 
