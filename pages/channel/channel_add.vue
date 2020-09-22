@@ -32,7 +32,11 @@
 					quotationPoint: '',
 					channelCompany: '',
 					mark: '',
-					openid: ''
+					openid: '',
+					createAt: null,
+					createBy: null,
+					updateAt: null,
+					updateBy: null
 				},
 				index: null,
 				isEdit: false,
@@ -84,6 +88,8 @@
 				this.$refs.channelForm.validate(valid => {
 					if (valid) {
 						if (self.isEdit) {
+							self.channel.updateAt = Date.now()
+							self.channel.updateBy = self.channel.openid
 							uniCloud.callFunction({
 								name: 'channel',
 								data: {
@@ -96,6 +102,8 @@
 								}
 							})
 						} else {
+							self.channel.createAt = Date.now()
+							self.channel.createBy = self.channel.openid
 							uniCloud.callFunction({
 								name: 'channel',
 								data: {

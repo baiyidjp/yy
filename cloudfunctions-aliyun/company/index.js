@@ -29,7 +29,11 @@ exports.main = async (event, context) => {
 			serviceCharge: company.serviceCharge,
 			serviceChargeSmall: company.serviceChargeSmall,
 			tax: company.tax,
-			mark: company.mark
+			mark: company.mark,
+			createAt: company.createAt,
+			createBy: company.createBy,
+			updateAt: company.updateAt,
+			updateBy: company.updateBy
 		})
 		return result ? true : false
 	}

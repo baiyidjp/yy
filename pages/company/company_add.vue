@@ -36,7 +36,11 @@
 					serviceChargeSmall: '',
 					tax: '0.015',
 					mark: '',
-					openid: ''
+					openid: '',
+					createAt: null,
+					createBy: null,
+					updateAt: null,
+					updateBy: null
 				},
 				index: null,
 				isEdit: false,
@@ -93,6 +97,8 @@
 				this.$refs.companyForm.validate(valid => {
 					if (valid) {
 						if (self.isEdit) {
+							self.company.updateAt = Date.now()
+							self.company.updateBy = self.company.openid
 							uniCloud.callFunction({
 								name: 'company',
 								data: {
@@ -105,6 +111,9 @@
 								}
 							})
 						} else {
+							self.company.createAt = Date.now()
+							self.company.createBy = self.company.openid
+							console.log(self.company);
 							uniCloud.callFunction({
 								name: 'company',
 								data: {

@@ -28,7 +28,11 @@ exports.main = async (event, context) => {
 			channelName: channel.channelName,
 			quotationPoint: channel.quotationPoint,
 			channelCompany: channel.channelCompany,
-			mark: channel.mark
+			mark: channel.mark,
+			createAt: channel.createAt,
+			createBy: channel.createBy,
+			updateAt: channel.updateAt,
+			updateBy: channel.updateBy
 		})
 		return result ? true : false
 	}
