@@ -71,7 +71,7 @@
 									})
 									// 有权限使用小程序 跳转首页
 									uni.switchTab({
-										url: '../channel/channel_list'
+										url: '../client/client_list'
 									})
 								})
 							}

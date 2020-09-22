@@ -6,7 +6,9 @@
     "pages/company/company_add",
     "pages/my/my",
     "pages/channel/channel_list",
-    "pages/channel/channel_add"
+    "pages/channel/channel_add",
+    "pages/client/client_list",
+    "pages/client/client_add"
   ],
   "subPackages": [],
   "window": {
@@ -21,6 +23,12 @@
     "borderStyle": "black",
     "backgroundColor": "#ffffff",
     "list": [
+      {
+        "pagePath": "pages/client/client_list",
+        "iconPath": "static/logo.png",
+        "selectedIconPath": "static/logo.png",
+        "text": "客户"
+      },
       {
         "pagePath": "pages/channel/channel_list",
         "iconPath": "static/logo.png",

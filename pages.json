@@ -40,6 +40,16 @@
 			"style": {
 				"navigationBarTitleText": "添加渠道"
 			}
+		}, {
+			"path": "pages/client/client_list",
+			"style": {
+				"navigationBarTitleText": "客户列表"
+			}
+		}, {
+			"path": "pages/client/client_add",
+			"style": {
+				"navigationBarTitleText": "添加客户"
+			}
 		}
 	],
 	"globalStyle": {
@@ -54,6 +64,11 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
+				"pagePath": "pages/client/client_list",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png",
+				"text": "客户"
+			}, {
 				"pagePath": "pages/channel/channel_list",
 				"iconPath": "static/logo.png",
 				"selectedIconPath": "static/logo.png",

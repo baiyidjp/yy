@@ -1,6 +1,6 @@
 'use strict';
 exports.main = async (event, context) => {
-// event.type = get/add
+	// event.type = get/add/update/delete
 	// get 获取渠道的列表
 	// add 增加新的渠道
 	// update 更新渠道信息
@@ -30,9 +30,9 @@ exports.main = async (event, context) => {
 			channelCompany: channel.channelCompany,
 			mark: channel.mark,
 			createAt: channel.createAt,
-			createBy: channel.createBy,
-			updateAt: channel.updateAt,
-			updateBy: channel.updateBy
+			createBy: company.createBy,
+			updateAt: company.updateAt,
+			updateBy: company.updateBy
 		})
 		return result ? true : false
 	}

@@ -1,6 +1,6 @@
 'use strict';
 exports.main = async (event, context) => {
-	// event.type = get/add
+	// event.type = get/add/update/delete
 	// get 获取税源地的列表
 	// add 增加新的税源地
 	// update 更新税源地信息

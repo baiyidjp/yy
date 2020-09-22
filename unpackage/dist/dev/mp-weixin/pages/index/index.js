@@ -210,7 +210,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function ownKeys(object, enumera
 
                 // 有权限使用小程序 跳转首页
                 uni.switchTab({
-                  url: '../channel/channel_list' });
+                  url: '../client/client_list' });
 
               });
             }
