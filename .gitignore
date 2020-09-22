@@ -83,3 +83,4 @@ test/e2e/reports
 *.njsproj
 *.sln
 /yarn.lock
+unpackage/dist/
