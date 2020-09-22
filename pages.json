@@ -11,17 +11,17 @@
 			}
 		},
 		{
-			"path": "pages/access_request/access_request",
+			"path": "pages/index/access_request",
 			"style": {
 				"navigationBarTitleText": "申请权限"
 			}
 		}, {
-			"path": "pages/company_list/company_list",
+			"path": "pages/company/company_list",
 			"style": {
 				"navigationBarTitleText": "税源地列表"
 			}
 		}, {
-			"path": "pages/company_list/company_add",
+			"path": "pages/company/company_add",
 			"style": {
 				"navigationBarTitleText": "添加税源地"
 			}
@@ -44,7 +44,7 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
-			"pagePath": "pages/company_list/company_list",
+			"pagePath": "pages/company/company_list",
 			"iconPath": "static/logo.png",
 			"selectedIconPath": "static/logo.png",
 			"text": "列表"

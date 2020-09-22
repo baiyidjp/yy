@@ -210,7 +210,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function ownKeys(object, enumera
 
                 // 有权限使用小程序 跳转首页
                 uni.switchTab({
-                  url: '../company_list/company_list' });
+                  url: '../company/company_list' });
 
               });
             }
@@ -223,7 +223,7 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function ownKeys(object, enumera
     },
     onClickAccess: function onClickAccess() {
       uni.navigateTo({
-        url: '../access_request/access_request' });
+        url: './access_request' });
 
     } }) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/uni-cloud/dist/index.js */ 45)["default"]))

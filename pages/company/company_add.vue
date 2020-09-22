@@ -13,6 +13,9 @@
 			<u-form-item label="税源地个税(小数):" prop="tax">
 				<u-input type="number" v-model="company.tax" placeholder="请输入税源地个税(小数)" />
 			</u-form-item>
+			<u-form-item label="备注:">
+				<u-input v-model="company.mark" placeholder="请输入备注(选填)" />
+			</u-form-item>
 		</u-form>
 		<u-button class="submitButton" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
 		<u-toast ref="uToast"/>
@@ -32,6 +35,7 @@
 					serviceCharge: '',
 					serviceChargeSmall: '',
 					tax: '0.015',
+					mark: '',
 					openid: ''
 				},
 				index: null,

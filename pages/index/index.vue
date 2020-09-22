@@ -71,7 +71,7 @@
 									})
 									// 有权限使用小程序 跳转首页
 									uni.switchTab({
-										url: '../company_list/company_list'
+										url: '../company/company_list'
 									})
 								})
 							}
@@ -84,7 +84,7 @@
 			},
 			onClickAccess() {
 				uni.navigateTo({
-					url: '../access_request/access_request'
+					url: './access_request'
 				})
 			}
 		}
