@@ -1,20 +1,20 @@
 <template>
-	<view class="wrap">
+	<view class="wrap" style="padding-bottom: 34px;">
 		<u-form class="form-wrap" :model="channel" ref="channelForm" label-width="200" label-position="top">
-			<u-form-item label="请输入渠道名称:" prop="channelName">
+			<u-form-item label="渠道名称:" prop="channelName">
 				<u-input v-model="channel.channelName" placeholder="请输入渠道名称" />
 			</u-form-item>
-			<u-form-item label="请输入报价点数(小数):" prop="quotationPoint">
+			<u-form-item label="报价点数(小数):" prop="quotationPoint">
 				<u-input type="number" v-model="channel.quotationPoint" placeholder="请输入报价点数(小数)" />
 			</u-form-item>
-			<u-form-item label="请输入渠道所属公司:" prop="channelCompany">
+			<u-form-item label="渠道所属公司:" prop="channelCompany">
 				<u-input v-model="channel.channelCompany" placeholder="请输入渠道所属公司" />
 			</u-form-item>
 			<u-form-item label="备注:">
-				<u-input v-model="channel.mark" placeholder="请输入备注(选填)" />
+				<u-input v-model="channel.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
 			</u-form-item>
 		</u-form>
-		<u-button class="submitButton" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
+		<u-button class="submit-button" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
 		<u-toast ref="uToast"/>
 	</view>
 </template>
@@ -142,13 +142,12 @@
 
 <style lang="scss" scoped>
 	.wrap {
-		padding: 20px 20px;
-		height: 100vh;
+		padding: 20px 20px 34px;
 		display: flex;
 		flex-direction: column;
 	}
 
-	.submitButton {
+	.submit-button {
 		margin-top: 20px;
 	}
 </style>
