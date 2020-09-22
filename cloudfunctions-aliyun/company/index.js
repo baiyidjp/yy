@@ -4,6 +4,7 @@ exports.main = async (event, context) => {
 	// get 获取税源地的列表
 	// add 增加新的税源地
 	// update 更新税源地信息
+	// delete 删除税源地信息
 	const type = event.type
 	
 	const db = uniCloud.database()
@@ -27,8 +28,18 @@ exports.main = async (event, context) => {
 			companyName: company.companyName,
 			serviceCharge: company.serviceCharge,
 			serviceChargeSmall: company.serviceChargeSmall,
-			tax: company.tax
+			tax: company.tax,
+			mark: company.mark
 		})
+		return result ? true : false
+	}
+	
+	if (type === 'delete') {
+		const company = event.company
+		const result = await db.collection('company_list').where({
+			openid: company.openid,
+			_id: company._id
+		}).remove()
 		return result ? true : false
 	}
 	

@@ -64,14 +64,14 @@
 										companyList: result.companyList.data
 									})
 									self.UPDATECLIENTLIST({
-										companyList: result.clientList.data
+										clientList: result.clientList.data
 									})
 									self.UPDATECHANNELLIST({
-										companyList: result.channelList.data
+										channelList: result.channelList.data
 									})
 									// 有权限使用小程序 跳转首页
 									uni.switchTab({
-										url: '../company/company_list'
+										url: '../channel/channel_list'
 									})
 								})
 							}
@@ -79,6 +79,9 @@
 					},
 					fail: (error) => {
 						console.log(error);
+						uni.showToast({
+							title: '查询权限失败'
+						})
 					}
 				})
 			},

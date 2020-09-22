@@ -8047,12 +8047,19 @@ var store = new _vuex.default.Store({
     },
     companyList: function companyList(state) {
       return state.companyList;
+    },
+    channelList: function channelList(state) {
+      return state.channelList;
+    },
+    clientList: function clientList(state) {
+      return state.clientList;
     } },
 
   mutations: {
     UPDATEOPENID: function UPDATEOPENID(state, payload) {
       state.openid = payload.openid;
     },
+    // company
     UPDATECOMPANYLIST: function UPDATECOMPANYLIST(state, payload) {
       state.companyList = payload.companyList;
     },
@@ -8062,11 +8069,34 @@ var store = new _vuex.default.Store({
     UPDATECOMPANY: function UPDATECOMPANY(state, payload) {
       state.companyList[payload.index] = payload.company;
     },
+    DELETECOMPANY: function DELETECOMPANY(state, payload) {
+      state.companyList.splice(payload.index, 1);
+    },
+    // client
     UPDATECLIENTLIST: function UPDATECLIENTLIST(state, payload) {
       state.clientList = payload.clientList;
     },
+    ADDCLIENT: function ADDCLIENT(state, payload) {
+      state.clientList = [].concat(_toConsumableArray(state.clientList), [payload.client]);
+    },
+    UPDATECLIENT: function UPDATECLIENT(state, payload) {
+      state.clientList[payload.index] = payload.client;
+    },
+    DELETECLIENT: function DELETECLIENT(state, payload) {
+      state.clientList.splice(payload.index, 1);
+    },
+    // channel
     UPDATECHANNELLIST: function UPDATECHANNELLIST(state, payload) {
       state.channelList = payload.channelList;
+    },
+    ADDCHANNEL: function ADDCHANNEL(state, payload) {
+      state.channelList = [].concat(_toConsumableArray(state.channelList), [payload.channel]);
+    },
+    UPDATECHANNEL: function UPDATECHANNEL(state, payload) {
+      state.channelList[payload.index] = payload.channel;
+    },
+    DELETECHANNEL: function DELETECHANNEL(state, payload) {
+      state.channelList.splice(payload.index, 1);
     } },
 
   actions: {} });var _default =
@@ -10841,7 +10871,13 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /* 102 */,
 /* 103 */,
 /* 104 */,
-/* 105 */
+/* 105 */,
+/* 106 */,
+/* 107 */,
+/* 108 */,
+/* 109 */,
+/* 110 */,
+/* 111 */
 /*!****************************************************************************!*\
   !*** /Users/peng/Desktop/HX/yy/node_modules/uview-ui/libs/util/emitter.js ***!
   \****************************************************************************/
@@ -10900,7 +10936,7 @@ function _broadcast(componentName, eventName, params) {
     } } };exports.default = _default;
 
 /***/ }),
-/* 106 */
+/* 112 */
 /*!************************************************************************************!*\
   !*** /Users/peng/Desktop/HX/yy/node_modules/uview-ui/libs/util/async-validator.js ***!
   \************************************************************************************/
@@ -12263,10 +12299,10 @@ Schema.warning = warning;
 Schema.messages = messages;var _default =
 
 Schema;exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../../Applications/HBuilderX.app/Contents/HBuilderX/plugins/uniapp-cli/node_modules/node-libs-browser/mock/process.js */ 107)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../../../Applications/HBuilderX.app/Contents/HBuilderX/plugins/uniapp-cli/node_modules/node-libs-browser/mock/process.js */ 113)))
 
 /***/ }),
-/* 107 */
+/* 113 */
 /*!********************************************************!*\
   !*** ./node_modules/node-libs-browser/mock/process.js ***!
   \********************************************************/
@@ -12297,7 +12333,7 @@ exports.binding = function (name) {
     var path;
     exports.cwd = function () { return cwd };
     exports.chdir = function (dir) {
-        if (!path) path = __webpack_require__(/*! path */ 108);
+        if (!path) path = __webpack_require__(/*! path */ 114);
         cwd = path.resolve(dir, cwd);
     };
 })();
@@ -12310,7 +12346,7 @@ exports.features = {};
 
 
 /***/ }),
-/* 108 */
+/* 114 */
 /*!***********************************************!*\
   !*** ./node_modules/path-browserify/index.js ***!
   \***********************************************/
@@ -12620,7 +12656,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 107)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node-libs-browser/mock/process.js */ 113)))
 
 /***/ })
 ]]);

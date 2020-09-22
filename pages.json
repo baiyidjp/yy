@@ -30,6 +30,16 @@
 			"style": {
 				"navigationBarTitleText": "我的"
 			}
+		}, {
+			"path": "pages/channel/channel_list",
+			"style": {
+				"navigationBarTitleText": "渠道列表"
+			}
+		}, {
+			"path": "pages/channel/channel_add",
+			"style": {
+				"navigationBarTitleText": "添加渠道"
+			}
 		}
 	],
 	"globalStyle": {
@@ -44,15 +54,22 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
-			"pagePath": "pages/company/company_list",
-			"iconPath": "static/logo.png",
-			"selectedIconPath": "static/logo.png",
-			"text": "列表"
-		}, {
-			"pagePath": "pages/my/my",
-			"iconPath": "static/logo.png",
-			"selectedIconPath": "static/logo.png",
-			"text": "我的"
-		}]
+				"pagePath": "pages/channel/channel_list",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png",
+				"text": "渠道"
+			}, {
+				"pagePath": "pages/company/company_list",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png",
+				"text": "税源地"
+			},
+			{
+				"pagePath": "pages/my/my",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png",
+				"text": "我的"
+			}
+		]
 	}
 }

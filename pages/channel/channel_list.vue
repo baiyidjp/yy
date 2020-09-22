@@ -1,19 +1,18 @@
 <template>
-	<block v-if="companyList.length > 0">
+	<block v-if="channelList.length > 0">
 		<view class="wrap">
-			<block v-for="(company, index) in companyList" :key="company._id">
-				<view class="company-item">
+			<block v-for="(channel, index) in channelList" :key="channel._id">
+				<view class="channel-item">
 					<view class="top-wrap">
-						<text class="title">{{ company.companyName }}</text>
+						<text class="title">{{ channel.channelName }}</text>
 						<view class="tag-wrap">
 							<u-tag text="删除" type="error" @click="onClickDelete(index)"></u-tag>
 							<u-tag text="编辑" @click="onClickEdit(index)"></u-tag>
 						</view>
 					</view>
-					<text class="sub-title">大额服务费比例: {{ company.serviceCharge }}</text>
-					<text class="sub-title">小额服务费比例: {{ company.serviceChargeSmall }}</text>
-					<text class="sub-title">个税比例: {{ company.tax }}</text>
-					<text class="sub-title">备注: {{ company.mark.length > 0 ? company.mark : '无' }}</text>
+					<text class="sub-title">报价点位: {{ channel.quotationPoint }}</text>
+					<text class="sub-title">所属公司: {{ channel.channelCompany }}</text>
+					<text class="sub-title">备注: {{ channel.mark.length > 0 ? channel.mark : '无' }}</text>
 				</view>
 			</block>
 			<view class="add-wrap" @click="onClickAddButton">
@@ -26,7 +25,7 @@
 	</block>
 	<block v-else>
 		<view class="wrap no-data-wrap">
-			<text>当前账号没有添加税源地</text>
+			<text>当前账号没有添加渠道</text>
 			<u-button type="primary" @click="onClickAddButton">添加</u-button>
 		</view>
 	</block>
@@ -46,18 +45,18 @@
 		},
 		onLoad() {},
 		computed: {
-			...mapGetters(['openid', 'companyList'])
+			...mapGetters(['openid', 'channelList'])
 		},
 		methods: {
-			...mapMutations(['DELETECOMPANY']),
+			...mapMutations(['DELETECHANNEL']),
 			onClickAddButton() {
 				uni.navigateTo({
-					url: './company_add'
+					url: './channel_add'
 				})
 			},
 			onClickEdit(index) {
 				uni.navigateTo({
-					url: `./company_add?index=${index}`
+					url: `./channel_add?index=${index}`
 				})
 			},
 			onClickDelete(index) {
@@ -67,15 +66,15 @@
 			onClickConfirmDelete() {
 				let self = this
 				uniCloud.callFunction({
-					name: 'company',
+					name: 'channel',
 					data: {
 						type: 'delete',
-						company: self.companyList[self.deleteIndex]
+						channel: self.channelList[self.deleteIndex]
 					}
 				}).then(res => {
 					self.showDeleteModal = false
 					if (res.result) {
-						self.DELETECOMPANY({
+						self.DELETECHANNEL({
 							index: self.deleteIndex
 						})
 						self.$refs.uToast.show({
@@ -116,7 +115,7 @@
 		justify-content: center;
 	}
 
-	.company-item {
+	.channel-item {
 		margin: 15px;
 		padding: 15px;
 		border-radius: 5px;
@@ -125,13 +124,13 @@
 		flex-direction: column;
 	}
 
-	.company-item .top-wrap {
+	.channel-item .top-wrap {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
 
-	.company-item .top-wrap .tag-wrap {
+	.channel-item .top-wrap .tag-wrap {
 		display: flex;
 		align-items: center;
 	}
@@ -140,13 +139,13 @@
 		margin-left: 5px;
 	}
 
-	.company-item .title {
+	.channel-item .title {
 		font-size: 14px;
 		font-weight: bold;
 		color: $u-main-color;
 	}
 
-	.company-item .sub-title {
+	.channel-item .sub-title {
 		margin-top: 5px;
 		font-size: 14px;
 		color: $u-content-color;

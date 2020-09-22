@@ -10,25 +10,16 @@
 		"preloadBackgroundData": false,
 		"minified": true,
 		"newFeature": true,
-		"coverView": true,
 		"autoAudits": false,
+		"coverView": true,
 		"showShadowRootInWxmlPanel": true,
 		"scopeDataCheck": false,
-		"checkInvalidKey": true,
-		"checkSiteMap": true,
-		"uploadWithSourceMap": true,
-		"babelSetting": {
-			"ignore": [],
-			"disablePlugins": [],
-			"outputPath": ""
-		},
-		"useCompilerModule": false,
-		"userConfirmedUseCompilerModuleSwitch": false
+		"useCompilerModule": false
 	},
 	"compileType": "miniprogram",
 	"libVersion": "",
 	"appid": "wx39bdc15715f29e38",
-	"projectname": "yy",
+	"projectname": "%E7%81%B5%E6%B4%BB%E7%94%A8%E5%B7%A5%E5%B0%8F%E5%8A%A9%E6%89%8B",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {

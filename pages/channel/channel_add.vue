@@ -1,20 +1,17 @@
 <template>
 	<view class="wrap">
-		<u-form class="form-wrap" :model="company" ref="companyForm" label-width="200" label-position="top">
-			<u-form-item label="税源地名称:" prop="companyName">
-				<u-input v-model="company.companyName" placeholder="请输入税源地名称" />
+		<u-form class="form-wrap" :model="channel" ref="channelForm" label-width="200" label-position="top">
+			<u-form-item label="请输入渠道名称:" prop="channelName">
+				<u-input v-model="channel.channelName" placeholder="请输入渠道名称" />
 			</u-form-item>
-			<u-form-item label="税源地服务费(小数):" prop="serviceCharge">
-				<u-input type="number" v-model="company.serviceCharge" placeholder="请输入税源地服务费(小数)" />
+			<u-form-item label="请输入报价点数(小数):" prop="quotationPoint">
+				<u-input type="number" v-model="channel.quotationPoint" placeholder="请输入报价点数(小数)" />
 			</u-form-item>
-			<u-form-item label="税源地小额服务费(小数):" prop="serviceChargeSmall">
-				<u-input type="number" v-model="company.serviceChargeSmall" placeholder="请输入税源地小额服务费(小数)" />
-			</u-form-item>
-			<u-form-item label="税源地个税(小数):" prop="tax">
-				<u-input type="number" v-model="company.tax" placeholder="请输入税源地个税(小数)" />
+			<u-form-item label="请输入渠道所属公司:" prop="channelCompany">
+				<u-input v-model="channel.channelCompany" placeholder="请输入渠道所属公司" />
 			</u-form-item>
 			<u-form-item label="备注:">
-				<u-input v-model="company.mark" placeholder="请输入备注(选填)" />
+				<u-input v-model="channel.mark" placeholder="请输入备注(选填)" />
 			</u-form-item>
 		</u-form>
 		<u-button class="submitButton" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
@@ -30,38 +27,32 @@
 	export default {
 		data() {
 			return {
-				company: {
-					companyName: '',
-					serviceCharge: '',
-					serviceChargeSmall: '',
-					tax: '0.015',
+				channel: {
+					channelName: '',
+					quotationPoint: '',
+					channelCompany: '',
 					mark: '',
 					openid: ''
 				},
 				index: null,
 				isEdit: false,
 				rules: {
-					companyName: [{
+					channelName: [{
 						required: true,
-						message: '请输入税源地名称',
+						message: '请输入渠道名称',
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur'],
 					}],
-					serviceCharge: [{
+					quotationPoint: [{
 						required: true,
-						message: '请输入税源地服务费(小数)',
+						message: '请输入报价点数(小数)',
 						trigger: ['change', 'blur']
 					}],
-					serviceChargeSmall: [{
+					channelchannel: [{
 						required: true,
-						message: '请输入税源地小额服务费(小数)',
+						message: '请输入渠道所属公司',
 						trigger: ['change', 'blur']
-					}],
-					tax: [{
-						required: true,
-						message: '请输入税源地个税(小数)',
-						trigger: ['change', 'blur']
-					}],
+					}]
 				},
 				submiting: false
 			}
@@ -69,35 +60,35 @@
 		onLoad(option) {
 			if (option.index) {
 				this.index = option.index
-				this.company = this.companyList[option.index]
+				this.channel = this.channelList[option.index]
 				this.isEdit = true
 			}
 		},
 		onReady() {
-			this.$refs.companyForm.setRules(this.rules);
+			this.$refs.channelForm.setRules(this.rules);
 			if (this.isEdit) {
 				uni.setNavigationBarTitle({
-					title: '编辑税源地'
+					title: '编辑渠道'
 				})
 			}
 		},
 		computed: {
-			...mapGetters(['openid', 'companyList'])
+			...mapGetters(['openid', 'channelList'])
 		},
 		methods: {
-			...mapMutations(['ADDCOMPANY', 'UPDATECOMPANY']),
+			...mapMutations(['ADDCHANNEL', 'UPDATECHANNEL']),
 			onClickSubmit() {
 				const self = this
 				self.submiting = true
-				self.company.openid = self.openid
-				this.$refs.companyForm.validate(valid => {
+				self.channel.openid = self.openid
+				this.$refs.channelForm.validate(valid => {
 					if (valid) {
 						if (self.isEdit) {
 							uniCloud.callFunction({
-								name: 'company',
+								name: 'channel',
 								data: {
 									type: 'update',
-									company: self.company
+									channel: self.channel
 								}
 							}).then(res => {
 								if (res.result) {
@@ -106,16 +97,16 @@
 							})
 						} else {
 							uniCloud.callFunction({
-								name: 'company',
+								name: 'channel',
 								data: {
 									type: 'add',
-									company: self.company
+									channel: self.channel
 								}
 							}).then(res => {
 								if (res.result.id) {
-									self.company._id = res.result.id
-									self.ADDCOMPANY({
-										company: self.company
+									self.channel._id = res.result.id
+									self.ADDCHANNEL({
+										channel: self.channel
 									})
 									self.showToast()
 								}

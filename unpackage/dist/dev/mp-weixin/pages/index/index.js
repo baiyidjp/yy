@@ -94,10 +94,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components = {
   uLoading: function() {
-    return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-loading/u-loading */ "node-modules/uview-ui/components/u-loading/u-loading").then(__webpack_require__.bind(null, /*! uview-ui/components/u-loading/u-loading.vue */ 79))
+    return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-loading/u-loading */ "node-modules/uview-ui/components/u-loading/u-loading").then(__webpack_require__.bind(null, /*! uview-ui/components/u-loading/u-loading.vue */ 85))
   },
   uButton: function() {
-    return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-button/u-button */ "node-modules/uview-ui/components/u-button/u-button").then(__webpack_require__.bind(null, /*! uview-ui/components/u-button/u-button.vue */ 86))
+    return __webpack_require__.e(/*! import() | node-modules/uview-ui/components/u-button/u-button */ "node-modules/uview-ui/components/u-button/u-button").then(__webpack_require__.bind(null, /*! uview-ui/components/u-button/u-button.vue */ 92))
   }
 }
 var render = function() {
@@ -203,14 +203,14 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function ownKeys(object, enumera
                   companyList: result.companyList.data });
 
                 self.UPDATECLIENTLIST({
-                  companyList: result.clientList.data });
+                  clientList: result.clientList.data });
 
                 self.UPDATECHANNELLIST({
-                  companyList: result.channelList.data });
+                  channelList: result.channelList.data });
 
                 // 有权限使用小程序 跳转首页
                 uni.switchTab({
-                  url: '../company/company_list' });
+                  url: '../channel/channel_list' });
 
               });
             }
@@ -218,6 +218,9 @@ var _vuex = __webpack_require__(/*! vuex */ 12);function ownKeys(object, enumera
         },
         fail: function fail(error) {
           console.log(error);
+          uni.showToast({
+            title: '查询权限失败' });
+
         } });
 
     },
