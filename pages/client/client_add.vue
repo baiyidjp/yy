@@ -72,7 +72,7 @@
 			this.$refs.clientForm.setRules(this.rules);
 			if (this.isEdit) {
 				uni.setNavigationBarTitle({
-					title: '编辑渠道'
+					title: '编辑客户'
 				})
 			}
 		},
