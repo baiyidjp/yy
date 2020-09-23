@@ -22,7 +22,8 @@
 					openid: '',
 					name: '',
 					phone: '',
-					approved: false
+					isApproved: false,
+					isAdmin: false
 				},
 				rules: {
 					name: [{
@@ -43,12 +44,12 @@
 			this.$refs.userForm.setRules(this.rules);
 		},
 		computed: {
-			...mapGetters(['openid'])
+			...mapGetters(['currentUser'])
 		},
 		methods: {
 			onClickSubmit() {
 				const self = this
-				self.user.openid = self.openid
+				self.user.openid = self.currentUser.openid
 				this.$refs.userForm.validate(valid => {
 					if (valid) {
 						uniCloud.callFunction({

@@ -77,14 +77,14 @@
 			}
 		},
 		computed: {
-			...mapGetters(['openid', 'channelList'])
+			...mapGetters(['currentUser', 'channelList'])
 		},
 		methods: {
 			...mapMutations(['ADDCHANNEL', 'UPDATECHANNEL']),
 			onClickSubmit() {
 				const self = this
 				self.submiting = true
-				self.channel.openid = self.openid
+				self.channel.openid = self.currentUser.openid
 				this.$refs.channelForm.validate(valid => {
 					if (valid) {
 						if (self.isEdit) {

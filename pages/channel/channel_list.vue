@@ -45,7 +45,7 @@
 		},
 		onLoad() {},
 		computed: {
-			...mapGetters(['openid', 'channelList'])
+			...mapGetters(['currentUser', 'channelList'])
 		},
 		methods: {
 			...mapMutations(['DELETECHANNEL']),

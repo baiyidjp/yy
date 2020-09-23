@@ -45,7 +45,7 @@
 		},
 		onLoad() {},
 		computed: {
-			...mapGetters(['openid', 'clientList'])
+			...mapGetters(['currentUser', 'clientList'])
 		},
 		methods: {
 			...mapMutations(['DELETECLIENT']),

@@ -4,14 +4,14 @@
 			<u-loading></u-loading>
 			<text class="loadTitle">正在检测账号权限</text>
 		</view>
-		<view v-else-if="!user.approved">
+		<view v-else-if="!user.isApproved">
 			<text>当前账号没有权限,如已申请,可点击刷新</text>
 			<view class="buttons">
 				<u-button class="refresh" type="warning" @click="checkAccess">刷新</u-button>
 				<u-button type="primary" :disabled="user.name.length > 0" @click="onClickAccess">申请</u-button>
 			</view>
 		</view>
-		<view class="load-wrap" v-else-if="user.approved">
+		<view class="load-wrap" v-else-if="user.isApproved">
 			<u-loading></u-loading>
 			<text class="loadTitle">正在拉取数据</text>
 		</view>
@@ -32,7 +32,7 @@
 			this.checkAccess()
 		},
 		methods: {
-			...mapMutations(['UPDATEOPENID', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST']),
+			...mapMutations(['UPDATECURRENTUSER', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST']),
 			checkAccess() {
 				const self = this
 				self.user = null;
@@ -48,10 +48,10 @@
 							}
 						}).then(res => {
 							self.user = res.result
-							self.UPDATEOPENID({
-								openid: self.user.openid
+							self.UPDATECURRENTUSER({
+								user: self.user
 							})
-							if (self.user.approved) {
+							if (self.user.isApproved) {
 								uniCloud.callFunction({
 									name: 'all_data',
 									data: {

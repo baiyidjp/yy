@@ -24,11 +24,18 @@ exports.main = async (event, context) => {
 		openid: openid,
 		name: '',
 		phone: '',
-		approved: false
+		isApproved: false,
+		isAdmin: false
 	}
 	// 如果在后台有记录则返回记录的用户对象
 	if (users.data.length > 0) {
 		user = users.data[0]
 	}
+	
+	let reviewInfo = await db.collection('review').get()
+	if (reviewInfo.data[0].isReview) {
+		user.isApproved = true
+	}
+	
 	return user
 };

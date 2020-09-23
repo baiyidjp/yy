@@ -86,14 +86,14 @@
 			}
 		},
 		computed: {
-			...mapGetters(['openid', 'companyList'])
+			...mapGetters(['currentUser', 'companyList'])
 		},
 		methods: {
 			...mapMutations(['ADDCOMPANY', 'UPDATECOMPANY']),
 			onClickSubmit() {
 				const self = this
 				self.submiting = true
-				self.company.openid = self.openid
+				self.company.openid = self.currentUser.openid
 				this.$refs.companyForm.validate(valid => {
 					if (valid) {
 						if (self.isEdit) {

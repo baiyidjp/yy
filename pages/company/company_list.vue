@@ -46,7 +46,7 @@
 		},
 		onLoad() {},
 		computed: {
-			...mapGetters(['openid', 'companyList'])
+			...mapGetters(['currentUser', 'companyList'])
 		},
 		methods: {
 			...mapMutations(['DELETECOMPANY']),

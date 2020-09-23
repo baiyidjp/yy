@@ -5,14 +5,14 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	state: {
-		openid: null,
+		currentUser: null,
 		companyList: null,
 		clientList: null,
 		channelList: null
 	},
 	getters: {
-		openid: state => {
-			return state.openid
+		currentUser: state => {
+			return state.currentUser
 		},
 		companyList: state => {
 			return state.companyList
@@ -25,8 +25,8 @@ const store = new Vuex.Store({
 		}
 	},
 	mutations: {
-		UPDATEOPENID (state, payload) {
-			state.openid = payload.openid
+		UPDATECURRENTUSER (state, payload) {
+			state.currentUser = payload.user
 		},
 		// company
 		UPDATECOMPANYLIST (state, payload) {
