@@ -30,9 +30,9 @@ exports.main = async (event, context) => {
 			clientCompany: client.clientCompany,
 			mark: client.mark,
 			createAt: client.createAt,
-			createBy: company.createBy,
-			updateAt: company.updateAt,
-			updateBy: company.updateBy
+			createBy: client.createBy,
+			updateAt: client.updateAt,
+			updateBy: client.updateBy
 		})
 		return result ? true : false
 	}

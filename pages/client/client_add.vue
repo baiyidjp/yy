@@ -1,26 +1,26 @@
 <template>
 	<view class="wrap">
-		<u-form class="form-wrap" :model="client" ref="clientForm" label-width="200" label-position="top">
+		<u-form class="form-wrap" :model="client" ref="clientForm" label-width="160">
 			<u-form-item label="客户名称:" prop="clientName">
 				<u-input v-model="client.clientName" placeholder="请输入客户名称" />
 			</u-form-item>
-			<u-form-item label="服务费费率(小数):" prop="signupPoint">
+			<u-form-item label="服务费费率:" prop="signupPoint">
 				<u-input type="number" v-model="client.signupPoint" placeholder="请输入服务费费率(小数)" />
+			</u-form-item>
+			<u-form-item label="税源地:" prop="companyList">
+				<u-input v-model="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="showCompanyPop = true" />
+			</u-form-item>
+			<u-form-item label="渠道:" prop="channel">
+				<u-input v-model="client.channel.channelName" type="select" placeholder="请选择渠道(单选)" @click="showChannelPop = true" />
+			</u-form-item>
+			<u-form-item label="联系方式:" prop="contactInformation">
+				<u-input v-model="clientContactNames" type="select" placeholder="请输入客户联系方式" @click="showContactPop = true" />
+			</u-form-item>
+			<u-form-item label="开票信息:" prop="contactInformation">
+				<u-input v-model="clientInvoiceInfo" type="select" placeholder="请输入客户开票信息" @click="showInvoiceInfoPop = true" />
 			</u-form-item>
 			<u-form-item label="签约时间:" prop="signupTime">
 				<u-input v-model="client.signupTime" type="select" placeholder="请选择签约时间" @click="showCalendar = true" />
-			</u-form-item>
-			<u-form-item label="税源地(多选):">
-				<u-input v-model="clientCompanyNames" type="select" placeholder="请选择税源地" @click="showCompanyPop = true" />
-			</u-form-item>
-			<u-form-item label="渠道:" prop="channel">
-				<u-input v-model="client.channel.channelName" type="select" placeholder="请选择渠道" @click="showChannelPop = true" />
-			</u-form-item>
-			<u-form-item label="客户联系方式:" prop="contactInformation">
-				<u-input v-model="clientContactNames" type="select" placeholder="请输入客户联系方式" @click="showContactPop = true" />
-			</u-form-item>
-			<u-form-item label="客户开票信息:" prop="contactInformation">
-				<u-input v-model="clientInvoiceInfo" type="select" placeholder="请输入客户开票信息" @click="showInvoiceInfoPop = true" />
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="client.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
@@ -29,7 +29,7 @@
 		<u-button class="submit-button" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
 		<u-toast ref="uToast" />
 		<u-calendar v-model="showCalendar" mode="date" max-date="2099-01-01" @change="onChangeDate"></u-calendar>
-		<u-popup v-model="showCompanyPop" mode="center" border-radius="10" width="90%" :closeable="true">
+		<u-popup v-model="showCompanyPop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
 					请选择税源地(多选)
@@ -41,7 +41,7 @@
 				</u-checkbox-group>
 			</view>
 		</u-popup>
-		<u-popup v-model="showChannelPop" mode="center" border-radius="10" width="90%" :closeable="true">
+		<u-popup v-model="showChannelPop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
 					请选择渠道(单选)
@@ -53,51 +53,51 @@
 				</u-radio-group>
 			</view>
 		</u-popup>
-		<u-popup v-model="showContactPop" mode="center" border-radius="10" width="90%" :closeable="true">
+		<u-popup v-model="showContactPop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
 					请填写客户联系方式
 				</view>
-				<u-form class="contact-form" label-width="200" label-position="top">
-					<u-form-item label="联系人姓名:">
-						<u-input v-model="client.contactInformation.name" placeholder="请输入姓名"/>
+				<u-form class="contact-form" :model="client.contactInformation" ref="contactForm" label-width="160">
+					<u-form-item label="联系人姓名:" prop="name">
+						<u-input v-model="client.contactInformation.name" placeholder="请输入姓名" />
 					</u-form-item>
-					<u-form-item label="联系方式:">
-						<u-input v-model="client.contactInformation.phone" placeholder="请输入联系方式"/>
+					<u-form-item label="联系方式:" prop="phone">
+						<u-input v-model="client.contactInformation.phone" placeholder="请输入联系方式" />
 					</u-form-item>
-					<u-form-item label="地址:">
-						<u-input v-model="client.contactInformation.address" placeholder="请输入地址"/>
+					<u-form-item label="地址:" prop="address">
+						<u-input v-model="client.contactInformation.address" placeholder="请输入地址" />
 					</u-form-item>
 				</u-form>
 				<u-button @click="onClickContactDone" type="primary">完成</u-button>
 			</view>
 		</u-popup>
-		<u-popup v-model="showInvoiceInfoPop" mode="center" border-radius="10" width="90%" :closeable="true">
+		<u-popup v-model="showInvoiceInfoPop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
 					请填写客户开票信息
 				</view>
-				<u-form class="contact-form" label-width="200" label-position="top">
-					<u-form-item label="公司名称:">
-						<u-input v-model="client.invoiceInfo.company" placeholder="请输入公司名称"/>
+				<u-form class="contact-form" :model="client.invoiceInfo" ref="invoiceForm" label-width="160">
+					<u-form-item label="公司名称:" prop="companyName">
+						<u-input v-model="client.invoiceInfo.companyName" placeholder="请输入公司名称" />
 					</u-form-item>
-					<u-form-item label="纳税识别号:">
-						<u-input v-model="client.invoiceInfo.taxNumber" placeholder="请输入纳税识别号"/>
+					<u-form-item label="纳税识别号:" prop="taxNumber">
+						<u-input v-model="client.invoiceInfo.taxNumber" placeholder="请输入纳税识别号" />
 					</u-form-item>
-					<u-form-item label="注册地址:">
-						<u-input v-model="client.invoiceInfo.registerAddress" placeholder="请输入注册地址"/>
+					<u-form-item label="注册地址:" prop="registerAddress">
+						<u-input v-model="client.invoiceInfo.registerAddress" placeholder="请输入注册地址" />
 					</u-form-item>
-					<u-form-item label="电话:">
-						<u-input v-model="client.invoiceInfo.phone" placeholder="请输入电话"/>
+					<u-form-item label="电话:" prop="phone">
+						<u-input v-model="client.invoiceInfo.phone" placeholder="请输入电话" />
 					</u-form-item>
-					<u-form-item label="银行开户行:">
-						<u-input v-model="client.invoiceInfo.bankName" placeholder="请输入银行开户行"/>
+					<u-form-item label="银行开户行:" prop="bankName">
+						<u-input v-model="client.invoiceInfo.bankName" placeholder="请输入银行开户行" />
 					</u-form-item>
-					<u-form-item label="银行账号:">
-						<u-input v-model="client.invoiceInfo.bankNumber" placeholder="请输入银行账号"/>
+					<u-form-item label="银行账号:" prop="bankNumber">
+						<u-input v-model="client.invoiceInfo.bankNumber" placeholder="请输入银行账号" />
 					</u-form-item>
-					<u-form-item label="邮寄地址:">
-						<u-input v-model="client.invoiceInfo.postAddress" placeholder="请输入邮寄地址"/>
+					<u-form-item label="邮寄地址:" prop="postAddress">
+						<u-input v-model="client.invoiceInfo.postAddress" placeholder="请输入邮寄地址" />
 					</u-form-item>
 				</u-form>
 				<u-button @click="onClickInvoiceDone" type="primary">完成</u-button>
@@ -116,7 +116,6 @@
 			return {
 				client: {
 					clientName: '',
-					signupTime: null,
 					signupPoint: '',
 					companyList: [],
 					channel: null,
@@ -134,6 +133,7 @@
 						bankNumber: '',
 						postAddress: '',
 					},
+					signupTime: '',
 					mark: '',
 					openid: '',
 					createAt: null,
@@ -148,7 +148,58 @@
 						required: true,
 						message: '请输入客户名称',
 						// 可以单个或者同时写两个触发验证方式 
-						trigger: ['change', 'blur'],
+						trigger: ['change', 'blur']
+					}],
+					signupPoint: [{
+						required: true,
+						message: '请输入服务费费率(小数)',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					companyList: [{
+						// 自定义验证函数
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value.length > 0
+						},
+						message: '请选择税源地(可多选)',
+						trigger: ['change', 'blur']
+					}],
+					channel: [{
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value ? true : false
+						},
+						message: '请选择渠道(单选)',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					contactInformation: [{
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value.name.length > 0 ? true : false
+						},
+						message: '请输入客户的联系方式',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					invoiceInfo: [{
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value.companyName.length > 0 ? true : false
+						},
+						message: '请输入客户开票信息',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					signupTime: [{
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value.length > 0 ? true : false
+						},
+						message: '请选择签约时间',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
 					}]
 				},
 				submiting: false,
@@ -159,8 +210,72 @@
 				clientCompanyNames: '',
 				showChannelPop: false,
 				showContactPop: false,
+				contactRules: {
+					name: [{
+						required: true,
+						message: '请输入姓名',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur'],
+					}],
+					phone: [{
+						required: true,
+						message: '请输入联系方式',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					address: [{
+						required: true,
+						message: '请输入地址',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}]
+				},
 				clientContactNames: '',
 				showInvoiceInfoPop: false,
+				invoiceRules: {
+					companyName: [{
+						required: true,
+						message: '请输入公司名称',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					taxNumber: [{
+						required: true,
+						message: '请输入纳税识别号',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					registerAddress: [{
+						required: true,
+						message: '请输入注册地址',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					phone: [{
+						required: true,
+						message: '请输入电话',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					bankName: [{
+						required: true,
+						message: '请输入银行开户行',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					bankNumber: [{
+						required: true,
+						message: '请输入银行账号',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					postAddress: [{
+						required: true,
+						message: '请输入邮寄地址',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}]
+				},
 				clientInvoiceInfo: ''
 			}
 		},
@@ -181,6 +296,8 @@
 		},
 		onReady() {
 			this.$refs.clientForm.setRules(this.rules);
+			this.$refs.contactForm.setRules(this.contactRules);
+			this.$refs.invoiceForm.setRules(this.invoiceRules);
 			if (this.isEdit) {
 				uni.setNavigationBarTitle({
 					title: '编辑客户'
@@ -203,20 +320,31 @@
 				this.client.channel = this.channelList.filter(channel => channel._id === id)[0]
 			},
 			onClickContactDone() {
-				this.showContactPop = false
-				this.clientContactNames = `${this.client.contactInformation.name} ${this.client.contactInformation.phone} ${this.client.contactInformation.address}`
+				let self = this
+				self.$refs.contactForm.validate(valid => {
+					if (valid) {
+						self.showContactPop = false
+						self.clientContactNames =
+							`${self.client.contactInformation.name} ${self.client.contactInformation.phone} ${self.client.contactInformation.address}`
+					}
+				})
 			},
 			onClickInvoiceDone() {
-				this.showInvoiceInfoPop = false
-				const invoiceInfo = this.client.invoiceInfo
-				this.clientInvoiceInfo = `${invoiceInfo.company} ${invoiceInfo.taxNumber}`
+				let self = this
+				self.$refs.invoiceForm.validate(valid => {
+					if (valid) {
+						self.showInvoiceInfoPop = false
+						const invoiceInfo = self.client.invoiceInfo
+						self.clientInvoiceInfo = `${invoiceInfo.companyName} ${invoiceInfo.taxNumber}`
+					}
+				})
 			},
 			onClickSubmit() {
 				const self = this
-				self.submiting = true
 				self.client.openid = self.currentUser.openid
 				this.$refs.clientForm.validate(valid => {
 					if (valid) {
+						self.submiting = true
 						if (self.isEdit) {
 							self.client.updateAt = Date.now()
 							self.client.updateBy = self.client.openid
@@ -256,7 +384,7 @@
 						self.submiting = false
 						console.log('验证失败');
 					}
-				});
+				})
 			},
 			showToast() {
 				this.$refs.uToast.show({
@@ -291,7 +419,7 @@
 		text-align: center;
 		margin-bottom: 20px;
 	}
-	
+
 	.contact-form {
 		margin-bottom: 10px;
 	}

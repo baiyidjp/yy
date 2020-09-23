@@ -66,24 +66,32 @@
 			},
 			onClickConfirmDelete() {
 				let self = this
-				uniCloud.callFunction({
-					name: 'company',
-					data: {
-						type: 'delete',
-						company: self.companyList[self.deleteIndex]
-					}
-				}).then(res => {
-					self.showDeleteModal = false
-					if (res.result) {
-						self.DELETECOMPANY({
-							index: self.deleteIndex
-						})
-						self.$refs.uToast.show({
-							title: '删除成功',
-							type: 'success'
-						})
-					}
-				})
+				const company = self.companyList[self.deleteIndex]
+				if (company.openid === self.currentUser.openid) {
+					uniCloud.callFunction({
+						name: 'company',
+						data: {
+							type: 'delete',
+							company: self.companyList[self.deleteIndex]
+						}
+					}).then(res => {
+						self.showDeleteModal = false
+						if (res.result) {
+							self.DELETECOMPANY({
+								index: self.deleteIndex
+							})
+							self.$refs.uToast.show({
+								title: '删除成功',
+								type: 'success'
+							})
+						}
+					})
+				} else {
+					self.$refs.uToast.show({
+						title: '无权删除',
+						type: 'error'
+					})
+				}
 			}
 		},
 	}
@@ -95,10 +103,12 @@
 		display: flex;
 		flex-direction: column;
 	}
+
 	.no-data-wrap {
 		justify-content: center;
 		align-items: center;
 	}
+
 	.no-data-wrap u-button {
 		margin-top: 10px;
 	}

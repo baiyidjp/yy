@@ -1,13 +1,13 @@
 <template>
 	<view class="wrap" style="padding-bottom: 34px;">
-		<u-form class="form-wrap" :model="channel" ref="channelForm" label-width="200" label-position="top">
+		<u-form class="form-wrap" :model="channel" ref="channelForm" label-width="160">
 			<u-form-item label="渠道名称:" prop="channelName">
 				<u-input v-model="channel.channelName" placeholder="请输入渠道名称" />
 			</u-form-item>
-			<u-form-item label="报价点数(小数):" prop="quotationPoint">
+			<u-form-item label="报价点数:" prop="quotationPoint">
 				<u-input type="number" v-model="channel.quotationPoint" placeholder="请输入报价点数(小数)" />
 			</u-form-item>
-			<u-form-item label="渠道所属公司:" prop="channelCompany">
+			<u-form-item label="所属公司:" prop="channelCompany">
 				<u-input v-model="channel.channelCompany" placeholder="请输入渠道所属公司" />
 			</u-form-item>
 			<u-form-item label="备注:">
@@ -52,7 +52,7 @@
 						message: '请输入报价点数(小数)',
 						trigger: ['change', 'blur']
 					}],
-					channelchannel: [{
+					channelCompany: [{
 						required: true,
 						message: '请输入渠道所属公司',
 						trigger: ['change', 'blur']
@@ -83,10 +83,10 @@
 			...mapMutations(['ADDCHANNEL', 'UPDATECHANNEL']),
 			onClickSubmit() {
 				const self = this
-				self.submiting = true
 				self.channel.openid = self.currentUser.openid
 				this.$refs.channelForm.validate(valid => {
 					if (valid) {
+						self.submiting = true
 						if (self.isEdit) {
 							self.channel.updateAt = Date.now()
 							self.channel.updateBy = self.channel.openid

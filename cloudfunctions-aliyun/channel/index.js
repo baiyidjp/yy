@@ -30,9 +30,9 @@ exports.main = async (event, context) => {
 			channelCompany: channel.channelCompany,
 			mark: channel.mark,
 			createAt: channel.createAt,
-			createBy: company.createBy,
-			updateAt: company.updateAt,
-			updateBy: company.updateBy
+			createBy: channel.createBy,
+			updateAt: channel.updateAt,
+			updateBy: channel.updateBy
 		})
 		return result ? true : false
 	}

@@ -1,16 +1,16 @@
 <template>
 	<view class="wrap">
-		<u-form class="form-wrap" :model="company" ref="companyForm" label-width="200" label-position="top">
+		<u-form class="form-wrap" :model="company" ref="companyForm" label-width="160">
 			<u-form-item label="税源地名称:" prop="companyName">
 				<u-input v-model="company.companyName" placeholder="请输入税源地名称" />
 			</u-form-item>
-			<u-form-item label="税源地服务费(小数):" prop="serviceCharge">
-				<u-input type="number" v-model="company.serviceCharge" placeholder="请输入税源地服务费(小数)" />
+			<u-form-item label="大额服务费:" prop="serviceCharge">
+				<u-input type="number" v-model="company.serviceCharge" placeholder="请输入税源地大额服务费(小数)" />
 			</u-form-item>
-			<u-form-item label="税源地小额服务费(小数):" prop="serviceChargeSmall">
+			<u-form-item label="小额服务费:" prop="serviceChargeSmall">
 				<u-input type="number" v-model="company.serviceChargeSmall" placeholder="请输入税源地小额服务费(小数)" />
 			</u-form-item>
-			<u-form-item label="税源地个税(小数):" prop="tax">
+			<u-form-item label="个税:" prop="tax">
 				<u-input type="number" v-model="company.tax" placeholder="请输入税源地个税(小数)" />
 			</u-form-item>
 			<u-form-item label="备注:">
@@ -92,10 +92,10 @@
 			...mapMutations(['ADDCOMPANY', 'UPDATECOMPANY']),
 			onClickSubmit() {
 				const self = this
-				self.submiting = true
 				self.company.openid = self.currentUser.openid
 				this.$refs.companyForm.validate(valid => {
 					if (valid) {
+						self.submiting = true
 						if (self.isEdit) {
 							self.company.updateAt = Date.now()
 							self.company.updateBy = self.company.openid
@@ -113,7 +113,6 @@
 						} else {
 							self.company.createAt = Date.now()
 							self.company.createBy = self.company.openid
-							console.log(self.company);
 							uniCloud.callFunction({
 								name: 'company',
 								data: {
