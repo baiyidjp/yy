@@ -1,10 +1,10 @@
 <template>
-	<view class="client-item">
+	<view class="wrap">
 		<view class="top-wrap">
 			<text class="title">{{ client.clientName }}</text>
 			<view class="tag-wrap">
 				<u-tag text="删除" type="error" @click="onClickDelete"></u-tag>
-				<u-tag class="tag-detail" text="详情" @click="onClickDetail"></u-tag>
+				<u-tag class="tag-edit" text="编辑" @click="onClickDetail"></u-tag>
 			</view>
 		</view>
 		<text class="sub-title">签约点位: {{ client.signupPoint }}</text>
@@ -15,34 +15,30 @@
 </template>
 
 <script>
+	import {
+		mapGetters
+	} from 'vuex'
 	export default {
 		data() {
-			return {}
-		},
-		props: {
-			client: null,
-			index: null
-		},
-		computed: {
-			clientCompanyNames() {
-				const names = this.client.companyList.map(company => company.companyName)
-				if (names.length > 0) {
-					let companyNames = names[0]
-					if (names.length > 1) {
-						companyNames += ` 等(共${names.length}个)`
-					}
-					return companyNames
-				}
-				return '无'
+			return {
+				client: null
 			}
 		},
+		onLoad(option) {
+			if (option._id) {
+				const findClient = this.clientList.find(client => client._id === option._id)
+				if (findClient) {
+					this.client = findClient
+				}
+			}
+		},
+		computed: {
+			...mapGetters(['clientList'])
+		},
 		methods: {
-			onClickDelete() {
-				this.$emit('delete', this.index)
-			},
 			onClickDetail() {
 				uni.navigateTo({
-					url: `./client_detail?_id=${this.client._id}`
+					url: `./client_add?_id=${this.client._id}`
 				})
 			}
 		},
@@ -50,7 +46,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.client-item {
+	.wrap {
 		margin: 15px;
 		padding: 15px;
 		border-radius: 5px;
@@ -59,28 +55,28 @@
 		flex-direction: column;
 	}
 
-	.client-item .top-wrap {
+	.wrap .top-wrap {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
 
-	.client-item .top-wrap .tag-wrap {
+	.wrap .top-wrap .tag-wrap {
 		display: flex;
 		align-items: center;
 	}
 
-	.tag-wrap .tag-detail {
+	.tag-wrap .tag-edit {
 		margin-left: 5px;
 	}
 
-	.client-item .title {
+	.wrap .title {
 		font-size: 14px;
 		font-weight: bold;
 		color: $u-main-color;
 	}
 
-	.client-item .sub-title {
+	.wrap .sub-title {
 		margin-top: 5px;
 		font-size: 14px;
 		color: $u-content-color;

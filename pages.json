@@ -46,6 +46,11 @@
 				"navigationBarTitleText": "客户列表"
 			}
 		}, {
+			"path": "pages/client/client_detail",
+			"style": {
+				"navigationBarTitleText": "客户详情"
+			}
+		}, {
 			"path": "pages/client/client_add",
 			"style": {
 				"navigationBarTitleText": "添加客户"

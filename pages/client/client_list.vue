@@ -31,7 +31,7 @@
 			return {
 				showDeleteModal: false,
 				deleteIndex: null
-			};
+			}
 		},
 		components: {
 			ClientItem

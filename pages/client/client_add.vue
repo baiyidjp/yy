@@ -8,10 +8,10 @@
 				<u-input type="number" v-model="client.signupPoint" placeholder="请输入服务费费率(小数)" />
 			</u-form-item>
 			<u-form-item label="税源地:" prop="companyList">
-				<u-input v-model="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="showCompanyPop = true" />
+				<u-input v-model="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="onClickCompanyList" />
 			</u-form-item>
 			<u-form-item label="渠道:" prop="channel">
-				<u-input v-model="client.channel.channelName" type="select" placeholder="请选择渠道(单选)" @click="showChannelPop = true" />
+				<u-input v-model="client.channel.channelName" type="select" placeholder="请选择渠道(单选)" @click="onClickChannelList" />
 			</u-form-item>
 			<u-form-item label="联系方式:" prop="contactInformation">
 				<u-input v-model="clientContactNames" type="select" placeholder="请输入客户联系方式" @click="showContactPop = true" />
@@ -29,18 +29,20 @@
 		<u-button class="submit-button" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
 		<u-toast ref="uToast" />
 		<u-calendar v-model="showCalendar" mode="date" max-date="2099-01-01" @change="onChangeDate"></u-calendar>
+		<u-modal v-model="showCompanyModal" content="暂无税源地,是否去添加?" :show-cancel-button="true" confirm-text="添加" @confirm="onClickConfirmCompany"></u-modal>
 		<u-popup v-model="showCompanyPop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
 					请选择税源地(多选)
 				</view>
-				<u-checkbox-group :wrap="true" @change="onChangeCompany">
+				<u-checkbox-group :wrap="true" shape="circle" @change="onChangeCompany">
 					<u-checkbox v-model="company.checked" v-for="(company, index) in clientCompanyList" :key="index" :name="company._id">
 						{{ company.companyName }}
 					</u-checkbox>
 				</u-checkbox-group>
 			</view>
 		</u-popup>
+		<u-modal v-model="showChannelModal" content="暂无渠道,是否去添加?" :show-cancel-button="true" confirm-text="添加" @confirm="onClickConfirmChannel"></u-modal>
 		<u-popup v-model="showChannelPop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
@@ -141,7 +143,6 @@
 					updateAt: null,
 					updateBy: null
 				},
-				index: null,
 				isEdit: false,
 				rules: {
 					clientName: [{
@@ -204,10 +205,12 @@
 				},
 				submiting: false,
 				showCalendar: false,
+				showCompanyModal: false,
 				// check box 使用
 				clientCompanyList: [],
 				showCompanyPop: false,
 				clientCompanyNames: '',
+				showChannelModal: false,
 				showChannelPop: false,
 				showContactPop: false,
 				contactRules: {
@@ -280,19 +283,28 @@
 			}
 		},
 		onLoad(option) {
-			if (option.index) {
-				this.index = option.index
-				this.client = this.clientList[option.index]
-				this.isEdit = true
-			} else {
-				this.clientCompanyList = this.companyList.map(company => {
-					return {
-						checked: false,
-						_id: company._id,
-						companyName: company.companyName
-					}
-				})
+			if (option._id) {
+				const findClient = this.clientList.find(client => client._id === option._id)
+				if (findClient) {
+					this.client = findClient
+					this.isEdit = true
+					this.clientCompanyNames = this.client.companyList.map(company => company.companyName).toString()
+					this.clientContactNames =
+						`${this.client.contactInformation.name} ${this.client.contactInformation.phone} ${this.client.contactInformation.address}`
+					this.clientInvoiceInfo = `${this.client.invoiceInfo.companyName} ${this.client.invoiceInfo.taxNumber}`
+				}
 			}
+		},
+		onShow() {
+			let self = this
+			self.clientCompanyList = self.companyList.map(company => {
+				const findCompany = self.client.companyList.find(cmp => cmp._id === company._id)
+				return {
+					checked: findCompany ? true : false,
+					_id: company._id,
+					companyName: company.companyName
+				}
+			})
 		},
 		onReady() {
 			this.$refs.clientForm.setRules(this.rules);
@@ -312,9 +324,33 @@
 			onChangeDate(e) {
 				this.client.signupTime = e.result
 			},
+			onClickCompanyList() {
+				if (this.companyList.length > 0) {
+					this.showCompanyPop = true
+				} else {
+					this.showCompanyModal = true
+				}
+			},
+			onClickConfirmCompany() {
+				uni.navigateTo({
+					url: '../company/company_add'
+				})
+			},
 			onChangeCompany(ids) {
 				this.client.companyList = this.companyList.filter(company => ids.includes(company._id))
 				this.clientCompanyNames = this.client.companyList.map(company => company.companyName).toString()
+			},
+			onClickChannelList() {
+				if (this.channelList.length > 0) {
+					this.showChannelPop = true
+				} else {
+					this.showChannelModal = true
+				}
+			},
+			onClickConfirmChannel() {
+				uni.navigateTo({
+					url: '../channel/channel_add'
+				})
 			},
 			onChangeChannel(id) {
 				this.client.channel = this.channelList.filter(channel => channel._id === id)[0]

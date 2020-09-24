@@ -38,7 +38,6 @@
 					updateAt: null,
 					updateBy: null
 				},
-				index: null,
 				isEdit: false,
 				rules: {
 					channelName: [{
@@ -62,10 +61,12 @@
 			}
 		},
 		onLoad(option) {
-			if (option.index) {
-				this.index = option.index
-				this.channel = this.channelList[option.index]
-				this.isEdit = true
+			if (option._id) {
+				const findChannel = this.channelList.find(channel => channel._id === option._id)
+				if (findChannel) {
+					this.channel = findChannel
+					this.isEdit = true
+				}
 			}
 		},
 		onReady() {

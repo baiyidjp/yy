@@ -42,7 +42,6 @@
 					updateAt: null,
 					updateBy: null
 				},
-				index: null,
 				isEdit: false,
 				rules: {
 					companyName: [{
@@ -71,10 +70,12 @@
 			}
 		},
 		onLoad(option) {
-			if (option.index) {
-				this.index = option.index
-				this.company = this.companyList[option.index]
-				this.isEdit = true
+			if (option._id) {
+				const findCompany = this.companyList.find(company => company._id === option._id)
+				if (findCompany) {
+					this.company = findCompany
+					this.isEdit = true
+				}
 			}
 		},
 		onReady() {
