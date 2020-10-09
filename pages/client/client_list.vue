@@ -36,12 +36,28 @@
 		components: {
 			ClientItem
 		},
-		onLoad() {},
+		onPullDownRefresh() {
+			const self = this
+			// 震动
+			uni.vibrateShort()
+			uniCloud.callFunction({
+				name: 'client',
+				data: {
+					type: 'get',
+					openid: self.currentUser.openid
+				}
+			}).then(res => {
+				self.UPDATECLIENTLIST({
+					clientList: res.result.data
+				})
+				uni.stopPullDownRefresh()
+			})
+		},
 		computed: {
 			...mapGetters(['currentUser', 'clientList'])
 		},
 		methods: {
-			...mapMutations(['DELETECLIENT']),
+			...mapMutations(['DELETECLIENT', 'UPDATECLIENTLIST']),
 			onClickAddButton() {
 				uni.navigateTo({
 					url: './client_add'

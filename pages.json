@@ -18,7 +18,8 @@
 		}, {
 			"path": "pages/company/company_list",
 			"style": {
-				"navigationBarTitleText": "税源地列表"
+				"navigationBarTitleText": "税源地列表",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/company/company_add",
@@ -33,7 +34,8 @@
 		}, {
 			"path": "pages/channel/channel_list",
 			"style": {
-				"navigationBarTitleText": "渠道列表"
+				"navigationBarTitleText": "渠道列表",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/channel/channel_add",
@@ -43,7 +45,8 @@
 		}, {
 			"path": "pages/client/client_list",
 			"style": {
-				"navigationBarTitleText": "客户列表"
+				"navigationBarTitleText": "客户列表",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/client/client_detail",
@@ -58,7 +61,8 @@
 		}, {
 			"path": "pages/issue/issue_list",
 			"style": {
-				"navigationBarTitleText": "工单列表"
+				"navigationBarTitleText": "工单列表",
+				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/issue/issue_add",

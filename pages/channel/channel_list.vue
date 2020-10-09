@@ -43,12 +43,28 @@
 				deleteIndex: null
 			};
 		},
-		onLoad() {},
+		onPullDownRefresh() {
+			const self = this
+			// 震动
+			uni.vibrateShort()
+			uniCloud.callFunction({
+				name: 'channel',
+				data: {
+					type: 'get',
+					openid: self.currentUser.openid
+				}
+			}).then(res => {
+				self.UPDATECHANNELLIST({
+					channelList: res.result.data
+				})
+				uni.stopPullDownRefresh()
+			})
+		},
 		computed: {
 			...mapGetters(['currentUser', 'channelList'])
 		},
 		methods: {
-			...mapMutations(['DELETECHANNEL']),
+			...mapMutations(['DELETECHANNEL', 'UPDATECHANNELLIST']),
 			onClickAddButton() {
 				uni.navigateTo({
 					url: './channel_add'

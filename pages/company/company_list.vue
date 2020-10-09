@@ -44,12 +44,28 @@
 				deleteIndex: null
 			};
 		},
-		onLoad() {},
+		onPullDownRefresh() {
+			const self = this
+			// 震动
+			uni.vibrateShort()
+			uniCloud.callFunction({
+				name: 'company',
+				data: {
+					type: 'get',
+					openid: self.currentUser.openid
+				}
+			}).then(res => {
+				self.UPDATECOMPANYLIST({
+					companyList: res.result.data
+				})
+				uni.stopPullDownRefresh()
+			})
+		},
 		computed: {
 			...mapGetters(['currentUser', 'companyList'])
 		},
 		methods: {
-			...mapMutations(['DELETECOMPANY']),
+			...mapMutations(['DELETECOMPANY', 'UPDATECOMPANYLIST']),
 			onClickAddButton() {
 				uni.navigateTo({
 					url: './company_add'
