@@ -12,7 +12,7 @@ exports.main = async (event, context) => {
 	if (type === 'get') {
 		let companyList = await db.collection('company_list').where({
 			openid: event.openid
-		}).get()
+		}).orderBy('createAt', 'desc').get()
 		return companyList
 	}
 	

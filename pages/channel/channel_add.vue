@@ -5,7 +5,7 @@
 				<u-input v-model="channel.channelName" placeholder="请输入渠道名称" />
 			</u-form-item>
 			<u-form-item label="报价点数:" prop="quotationPoint">
-				<u-input type="number" v-model="channel.quotationPoint" placeholder="请输入报价点数(小数)" />
+				<u-input type="digit" v-model="channel.quotationPoint" placeholder="请输入报价点数(小数)" />
 			</u-form-item>
 			<u-form-item label="所属公司:" prop="channelCompany">
 				<u-input v-model="channel.channelCompany" placeholder="请输入渠道所属公司" />
@@ -69,12 +69,9 @@
 			}
 		},
 		onLoad(option) {
-			if (option._id) {
-				const findChannel = this.channelList.find(channel => channel._id === option._id)
-				if (findChannel) {
-					this.channel = findChannel
-					this.isEdit = true
-				}
+			if (option.channel) {
+				this.channel = JSON.parse(option.channel)
+				this.isEdit = true
 			}
 		},
 		onReady() {
@@ -107,6 +104,9 @@
 								}
 							}).then(res => {
 								if (res.result) {
+									this.UPDATECHANNEL({
+										channel: self.channel
+									})
 									self.showToast()
 								}
 							})

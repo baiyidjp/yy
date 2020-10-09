@@ -6,7 +6,7 @@ exports.main = async (event, context) => {
 	const db = uniCloud.database()
 
 	if (type === 'get') {
-		const userList = await db.collection('user_list').get()
+		const userList = await db.collection('user_list').orderBy('createAt', 'desc').get()
 		return userList
 	}
 

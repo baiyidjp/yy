@@ -37,10 +37,11 @@ const store = new Vuex.Store({
 			state.companyList = payload.companyList
 		},
 		ADDCOMPANY (state, payload) {
-			state.companyList = [...state.companyList, payload.company]
+			state.companyList.splice(0, 0, payload.company)
 		},
 		UPDATECOMPANY (state, payload) {
-			state.companyList[payload.index] = payload.company
+			const index = state.companyList.findIndex(company => company._id === payload.company._id)
+			state.companyList.splice(index, 1, payload.company)
 		},
 		DELETECOMPANY (state, payload) {
 			state.companyList.splice(payload.index, 1)
@@ -50,10 +51,11 @@ const store = new Vuex.Store({
 			state.clientList = payload.clientList
 		},
 		ADDCLIENT (state, payload) {
-			state.clientList = [...state.clientList, payload.client]
+			state.clientList.splice(0, 0, payload.client)
 		},
 		UPDATECLIENT (state, payload) {
-			state.clientList[payload.index] = payload.client
+			const index = state.clientList.findIndex(client => client._id === payload.client._id)
+			state.clientList.splice(index, 1, payload.client)
 		},
 		DELETECLIENT (state, payload) {
 			state.clientList.splice(payload.index, 1)
@@ -63,10 +65,11 @@ const store = new Vuex.Store({
 			state.channelList = payload.channelList
 		},
 		ADDCHANNEL (state, payload) {
-			state.channelList = [...state.channelList, payload.channel]
+			state.channelList.splice(0, 0, payload.channel)
 		},
 		UPDATECHANNEL (state, payload) {
-			state.channelList[payload.index] = payload.channel
+			const index = state.channelList.findIndex(channel => channel._id === payload.channel._id)
+			state.channelList.splice(index, 1, payload.channel)
 		},
 		DELETECHANNEL (state, payload) {
 			state.channelList.splice(payload.index, 1)
@@ -76,10 +79,11 @@ const store = new Vuex.Store({
 			state.issueList = payload.issueList
 		},
 		ADDISSUE (state, payload) {
-			state.issueList = [...state.issueList, payload.issue]
+			state.issueList.splice(0, 0, payload.issue)
 		},
 		UPDATEISSUE (state, payload) {
-			state.issueList[payload.index] = payload.issue
+			const index = state.issueList.findIndex(issue => issue._id === payload.issue._id)
+			state.issueList.splice(index, 1, payload.issue)
 		},
 		DELETEISSUE (state, payload) {
 			state.issueList.splice(payload.index, 1)

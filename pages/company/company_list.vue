@@ -7,7 +7,7 @@
 						<text class="title">{{ company.companyName }}</text>
 						<view class="tag-wrap">
 							<u-tag text="删除" type="error" @click="onClickDelete(index)"></u-tag>
-							<u-tag text="编辑" @click="onClickEdit(company._id)"></u-tag>
+							<u-tag text="编辑" @click="onClickEdit(company)"></u-tag>
 						</view>
 					</view>
 					<text class="sub-title">大额服务费比例: {{ company.serviceCharge }}</text>
@@ -55,9 +55,9 @@
 					url: './company_add'
 				})
 			},
-			onClickEdit(id) {
+			onClickEdit(company) {
 				uni.navigateTo({
-					url: `./company_add?_id=${id}`
+					url: `./company_add?company=${JSON.stringify(company)}`
 				})
 			},
 			onClickDelete(index) {

@@ -47,9 +47,9 @@
 					url: './client_add'
 				})
 			},
-			onClickEdit(index) {
+			onClickEdit(client) {
 				uni.navigateTo({
-					url: `./client_add?index=${index}`
+					url: `./client_add?client=${JSON.stringify(client)}`
 				})
 			},
 			onClickDelete(index) {

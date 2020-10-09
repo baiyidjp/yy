@@ -7,7 +7,7 @@
 						<text class="title">{{ channel.channelName }}</text>
 						<view class="tag-wrap">
 							<u-tag text="删除" type="error" @click="onClickDelete(index)"></u-tag>
-							<u-tag text="编辑" @click="onClickEdit(channel._id)"></u-tag>
+							<u-tag text="编辑" @click="onClickEdit(channel)"></u-tag>
 						</view>
 					</view>
 					<text class="sub-title">报价点位: {{ channel.quotationPoint }}</text>
@@ -54,9 +54,9 @@
 					url: './channel_add'
 				})
 			},
-			onClickEdit(id) {
+			onClickEdit(channel) {
 				uni.navigateTo({
-					url: `./channel_add?_id=${id}`
+					url: `./channel_add?channel=${JSON.stringify(channel)}`
 				})
 			},
 			onClickDelete(index) {

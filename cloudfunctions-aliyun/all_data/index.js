@@ -5,19 +5,19 @@ exports.main = async (event, context) => {
 	
 	let companyList = await db.collection('company_list').where({
 		openid: event.openid
-	}).get()
+	}).orderBy('createAt', 'desc').get()
 	
 	let clientList = await db.collection('client_list').where({
 		openid: event.openid
-	}).get()
+	}).orderBy('createAt', 'desc').get()
 	
 	let channelList = await db.collection('channel_list').where({
 		openid: event.openid
-	}).get()
+	}).orderBy('createAt', 'desc').get()
 	
 	let issueList = await db.collection('issue_list').where({
 		openid: event.openid
-	}).get()
+	}).orderBy('createAt', 'desc').get()
 	
 	//返回数据给客户端
 	return {

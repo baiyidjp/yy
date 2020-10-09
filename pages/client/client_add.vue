@@ -5,7 +5,7 @@
 				<u-input v-model="client.clientName" placeholder="请输入客户名称" />
 			</u-form-item>
 			<u-form-item label="服务费费率:" prop="signupPoint">
-				<u-input type="number" v-model="client.signupPoint" placeholder="请输入服务费费率(小数)" />
+				<u-input type="digit" v-model="client.signupPoint" placeholder="请输入服务费费率(小数)" />
 			</u-form-item>
 			<u-form-item label="税源地:" prop="companyList">
 				<u-input v-model="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="onClickCompanyList" />
@@ -292,17 +292,14 @@
 			}
 		},
 		onLoad(option) {
-			if (option._id) {
-				const findClient = this.clientList.find(client => client._id === option._id)
-				if (findClient) {
-					this.client = findClient
-					this.isEdit = true
-					this.clientCompanyNames = this.companyList.filter(company => this.client.companyIds.includes(company._id)).map(company => company.companyName).toString()
-					this.checkedChannel = this.channelList.filter(channel => this.client.channelId === channel._id)[0]
-					this.clientContactNames =
-						`${this.client.contactInformation.name} ${this.client.contactInformation.phone} ${this.client.contactInformation.address}`
-					this.clientInvoiceInfo = `${this.client.invoiceInfo.companyName} ${this.client.invoiceInfo.taxNumber}`
-				}
+			if (option.client) {
+				this.client = JSON.parse(option.client)
+				this.isEdit = true
+				this.clientCompanyNames = this.companyList.filter(company => this.client.companyIds.includes(company._id)).map(company => company.companyName).toString()
+				this.checkedChannel = this.channelList.find(channel => this.client.channelId === channel._id)
+				this.clientContactNames =
+					`${this.client.contactInformation.name} ${this.client.contactInformation.phone} ${this.client.contactInformation.address}`
+				this.clientInvoiceInfo = `${this.client.invoiceInfo.companyName} ${this.client.invoiceInfo.taxNumber}`
 			}
 		},
 		onShow() {
@@ -403,6 +400,9 @@
 								}
 							}).then(res => {
 								if (res.result) {
+									self.UPDATECLIENT({
+										client: self.client
+									})
 									self.showToast()
 								}
 							})

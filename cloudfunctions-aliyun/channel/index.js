@@ -12,7 +12,7 @@ exports.main = async (event, context) => {
 	if (type === 'get') {
 		let channelList = await db.collection('channel_list').where({
 			openid: event.openid
-		}).get()
+		}).orderBy('createAt', 'desc').get()
 		return channelList
 	}
 	

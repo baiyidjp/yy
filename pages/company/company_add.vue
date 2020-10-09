@@ -5,20 +5,20 @@
 				<u-input v-model="company.companyName" placeholder="请输入税源地名称" />
 			</u-form-item>
 			<u-form-item label="大额服务费:" prop="serviceCharge">
-				<u-input type="number" v-model="company.serviceCharge" placeholder="请输入税源地大额服务费(小数)" />
+				<u-input type="digit" v-model="company.serviceCharge" placeholder="请输入税源地大额服务费(小数)" />
 			</u-form-item>
 			<u-form-item label="小额服务费:" prop="serviceChargeSmall">
-				<u-input type="number" v-model="company.serviceChargeSmall" placeholder="请输入税源地小额服务费(小数)" />
+				<u-input type="digit" v-model="company.serviceChargeSmall" placeholder="请输入税源地小额服务费(小数)" />
 			</u-form-item>
 			<u-form-item label="个税:" prop="tax">
-				<u-input type="number" v-model="company.tax" placeholder="请输入税源地个税(小数)" />
+				<u-input type="digit" v-model="company.tax" placeholder="请输入税源地个税(小数)" />
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="company.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
 			</u-form-item>
 		</u-form>
 		<u-button class="submit-button" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
-		<u-toast ref="uToast"/>
+		<u-toast ref="uToast" />
 	</view>
 </template>
 
@@ -94,12 +94,9 @@
 			}
 		},
 		onLoad(option) {
-			if (option._id) {
-				const findCompany = this.companyList.find(company => company._id === option._id)
-				if (findCompany) {
-					this.company = findCompany
-					this.isEdit = true
-				}
+			if (option.company) {
+				this.company = JSON.parse(option.company)
+				this.isEdit = true
 			}
 		},
 		onReady() {
@@ -132,6 +129,9 @@
 								}
 							}).then(res => {
 								if (res.result) {
+									self.UPDATECOMPANY({
+										company: self.company
+									})
 									self.showToast()
 								}
 							})

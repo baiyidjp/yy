@@ -1,11 +1,8 @@
 <template>
-	<view class="client-item">
+	<view class="client-item" @click="onClickDetail">
 		<view class="top-wrap">
 			<text class="title">{{ client.clientName }}</text>
-			<view class="tag-wrap">
-				<u-tag text="删除" type="error" @click="onClickDelete"></u-tag>
-				<u-tag class="tag-detail" text="详情" @click="onClickDetail"></u-tag>
-			</view>
+			<u-tag text="删除" type="error" @tap.native.stop="onClickDelete"></u-tag>
 		</view>
 		<text class="sub-title">签约点位: {{ client.signupPoint }}</text>
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
@@ -38,11 +35,14 @@
 					}
 					return companyNames
 				}
-				return '无'
+				return '无/被删除'
 			},
 			clientChannelName() {
-				const channelInfo = this.channelList.filter(channel => channel._id === this.client.channelId)[0]
-				return channelInfo.channelName
+				const channelInfo = this.channelList.find(channel => channel._id === this.client.channelId)
+				if (channelInfo) {
+					return channelInfo.channelName
+				}
+				return '无/被删除'
 			}
 		},
 		methods: {
@@ -72,15 +72,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-	}
-
-	.client-item .top-wrap .tag-wrap {
-		display: flex;
-		align-items: center;
-	}
-
-	.tag-wrap .tag-detail {
-		margin-left: 5px;
 	}
 
 	.client-item .title {

@@ -2,10 +2,7 @@
 	<view class="wrap">
 		<view class="top-wrap">
 			<text class="title">{{ client.clientName }}</text>
-			<view class="tag-wrap">
-				<u-tag text="删除" type="error" @click="onClickDelete"></u-tag>
-				<u-tag class="tag-edit" text="编辑" @click="onClickDetail"></u-tag>
-			</view>
+			<u-tag text="编辑" @click="onClickEdit"></u-tag>
 		</view>
 		<text class="sub-title">签约点位: {{ client.signupPoint }}</text>
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
@@ -32,19 +29,23 @@
 	export default {
 		data() {
 			return {
-				client: null
+				clientId: ''
 			}
 		},
 		onLoad(option) {
 			if (option._id) {
-				const findClient = this.clientList.find(client => client._id === option._id)
-				if (findClient) {
-					this.client = findClient
-				}
+				this.clientId = option._id
 			}
 		},
 		computed: {
 			...mapGetters(['clientList', 'companyList', 'channelList']),
+			client() {
+				const findClient = this.clientList.find(client => client._id === this.clientId)
+				if (findClient) {
+					return findClient
+				}
+				return null
+			},
 			clientCompanyNames() {
 				if (this.client) {
 					const companyListInfo = this.companyList.filter(company => this.client.companyIds.includes(company._id))
@@ -55,16 +56,19 @@
 			},
 			clientChannelName() {
 				if (this.client) {
-					const channelInfo = this.channelList.filter(channel => channel._id === this.client.channelId)[0]
-					return channelInfo.channelName
+					const channelInfo = this.channelList.find(channel => channel._id === this.client.channelId)
+					if (channelInfo) {
+						return channelInfo.channelName
+					}
+					return '无/被删除'
 				}
 				return ''
 			}
 		},
 		methods: {
-			onClickDetail() {
+			onClickEdit() {
 				uni.navigateTo({
-					url: `./client_add?_id=${this.client._id}`
+					url: `./client_add?client=${JSON.stringify(this.client)}`
 				})
 			}
 		},
@@ -85,15 +89,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-	}
-
-	.wrap .top-wrap .tag-wrap {
-		display: flex;
-		align-items: center;
-	}
-
-	.tag-wrap .tag-edit {
-		margin-left: 5px;
 	}
 
 	.wrap .title {
