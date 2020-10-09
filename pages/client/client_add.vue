@@ -11,7 +11,7 @@
 				<u-input v-model="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="onClickCompanyList" />
 			</u-form-item>
 			<u-form-item label="渠道:" prop="channel">
-				<u-input v-model="client.channel.channelName" type="select" placeholder="请选择渠道(单选)" @click="onClickChannelList" />
+				<u-input v-model="checkedChannel.channelName" type="select" placeholder="请选择渠道(单选)" @click="onClickChannelList" />
 			</u-form-item>
 			<u-form-item label="联系方式:" prop="contactInformation">
 				<u-input v-model="clientContactNames" type="select" placeholder="请输入客户联系方式" @click="showContactPop = true" />
@@ -48,7 +48,7 @@
 				<view class="show-pop-title">
 					请选择渠道(单选)
 				</view>
-				<u-radio-group v-model="client.channel._id">
+				<u-radio-group v-model="checkedChannel._id">
 					<u-radio v-for="(channel, index) in channelList" :key="index" :name="channel._id" @change="onChangeChannel">
 						{{channel.channelName}}
 					</u-radio>
@@ -119,8 +119,8 @@
 				client: {
 					clientName: '',
 					signupPoint: '',
-					companyList: [],
-					channel: null,
+					companyIds: [],
+					channelId: '',
 					contactInformation: {
 						name: '',
 						phone: '',
@@ -157,7 +157,7 @@
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
 					}],
-					companyList: [{
+					companyIds: [{
 						// 自定义验证函数
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
@@ -166,10 +166,10 @@
 						message: '请选择税源地(可多选)',
 						trigger: ['change', 'blur']
 					}],
-					channel: [{
+					channelId: [{
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
-							return value ? true : false
+							return value.length > 0
 						},
 						message: '请选择渠道(单选)',
 						// 可以单个或者同时写两个触发验证方式 
@@ -210,6 +210,7 @@
 				clientCompanyList: [],
 				showCompanyPop: false,
 				clientCompanyNames: '',
+				checkedChannel: null,
 				showChannelModal: false,
 				showChannelPop: false,
 				showContactPop: false,
@@ -288,7 +289,8 @@
 				if (findClient) {
 					this.client = findClient
 					this.isEdit = true
-					this.clientCompanyNames = this.client.companyList.map(company => company.companyName).toString()
+					this.clientCompanyNames = this.companyList.filter(company => this.client.companyIds.includes(company._id)).map(company => company.companyName).toString()
+					this.checkedChannel = this.channelList.filter(channel => this.client.channelId === channel._id)[0]
 					this.clientContactNames =
 						`${this.client.contactInformation.name} ${this.client.contactInformation.phone} ${this.client.contactInformation.address}`
 					this.clientInvoiceInfo = `${this.client.invoiceInfo.companyName} ${this.client.invoiceInfo.taxNumber}`
@@ -298,9 +300,8 @@
 		onShow() {
 			let self = this
 			self.clientCompanyList = self.companyList.map(company => {
-				const findCompany = self.client.companyList.find(cmp => cmp._id === company._id)
 				return {
-					checked: findCompany ? true : false,
+					checked: self.client.companyIds.includes(company._id),
 					_id: company._id,
 					companyName: company.companyName
 				}
@@ -337,8 +338,9 @@
 				})
 			},
 			onChangeCompany(ids) {
-				this.client.companyList = this.companyList.filter(company => ids.includes(company._id))
-				this.clientCompanyNames = this.client.companyList.map(company => company.companyName).toString()
+				const checkedCompanyList = this.companyList.filter(company => ids.includes(company._id))
+				this.clientCompanyNames = checkedCompanyList.map(company => company.companyName).toString()
+				this.client.companyIds = checkedCompanyList.map(company => company._id)
 			},
 			onClickChannelList() {
 				if (this.channelList.length > 0) {
@@ -353,7 +355,8 @@
 				})
 			},
 			onChangeChannel(id) {
-				this.client.channel = this.channelList.filter(channel => channel._id === id)[0]
+				this.client.channelId = id
+				this.checkedChannel = this.channelList.filter(channel => channel._id === id)[0]
 			},
 			onClickContactDone() {
 				let self = this

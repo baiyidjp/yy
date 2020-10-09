@@ -9,12 +9,15 @@
 		</view>
 		<text class="sub-title">签约点位: {{ client.signupPoint }}</text>
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
-		<text class="sub-title">渠道: {{ client.channel.channelName }}</text>
+		<text class="sub-title">渠道: {{ clientChannelName }}</text>
 		<text class="sub-title">备注: {{ client.mark.length > 0 ? client.mark : '无' }}</text>
 	</view>
 </template>
 
 <script>
+	import {
+		mapGetters
+	} from 'vuex'
 	export default {
 		data() {
 			return {}
@@ -24,8 +27,10 @@
 			index: null
 		},
 		computed: {
+			...mapGetters(['companyList', 'channelList']),
 			clientCompanyNames() {
-				const names = this.client.companyList.map(company => company.companyName)
+				const companyListInfo = this.companyList.filter(company => this.client.companyIds.includes(company._id))
+				const names = companyListInfo.map(company => company.companyName)
 				if (names.length > 0) {
 					let companyNames = names[0]
 					if (names.length > 1) {
@@ -34,6 +39,10 @@
 					return companyNames
 				}
 				return '无'
+			},
+			clientChannelName() {
+				const channelInfo = this.channelList.filter(channel => channel._id === this.client.channelId)[0]
+				return channelInfo.channelName
 			}
 		},
 		methods: {

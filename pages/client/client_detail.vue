@@ -9,7 +9,7 @@
 		</view>
 		<text class="sub-title">签约点位: {{ client.signupPoint }}</text>
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
-		<text class="sub-title">渠道: {{ client.channel.channelName }}</text>
+		<text class="sub-title">渠道: {{ clientChannelName }}</text>
 		<text class="sub-title">联系人: {{ client.contactInformation.name }}</text>
 		<text class="sub-title">联系人电话: {{ client.contactInformation.phone }}</text>
 		<text class="sub-title">联系人地址: {{ client.contactInformation.address}}</text>
@@ -44,10 +44,19 @@
 			}
 		},
 		computed: {
-			...mapGetters(['clientList']),
+			...mapGetters(['clientList', 'companyList', 'channelList']),
 			clientCompanyNames() {
 				if (this.client) {
-					return this.client.companyList.map(company => company.companyName).toString()
+					const companyListInfo = this.companyList.filter(company => this.client.companyIds.includes(company._id))
+					const names = companyListInfo.map(company => company.companyName)
+					return names
+				}
+				return ''
+			},
+			clientChannelName() {
+				if (this.client) {
+					const channelInfo = this.channelList.filter(channel => channel._id === this.client.channelId)[0]
+					return channelInfo.channelName
 				}
 				return ''
 			}
