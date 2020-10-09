@@ -50,6 +50,14 @@
 						required: true,
 						message: '请输入报价点数(小数)',
 						trigger: ['change', 'blur']
+					}, {
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value < 1 && value >= 0
+						},
+						message: '请输入报价点数(小数)',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
 					}],
 					channelCompany: [{
 						required: true,

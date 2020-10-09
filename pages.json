@@ -55,6 +55,21 @@
 			"style": {
 				"navigationBarTitleText": "添加客户"
 			}
+		}, {
+			"path": "pages/issue/issue_list",
+			"style": {
+				"navigationBarTitleText": "工单列表"
+			}
+		}, {
+			"path": "pages/issue/issue_add",
+			"style": {
+				"navigationBarTitleText": "创建工单"
+			}
+		}, {
+			"path": "pages/user/user_list",
+			"style": {
+				"navigationBarTitleText": "用户列表"
+			}
 		}
 	],
 	"globalStyle": {
@@ -69,6 +84,11 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
+				"pagePath": "pages/issue/issue_list",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png",
+				"text": "工单"
+			}, {
 				"pagePath": "pages/client/client_list",
 				"iconPath": "static/logo.png",
 				"selectedIconPath": "static/logo.png",

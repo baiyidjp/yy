@@ -8,7 +8,8 @@ const store = new Vuex.Store({
 		currentUser: null,
 		companyList: null,
 		clientList: null,
-		channelList: null
+		channelList: null,
+		issueList: null
 	},
 	getters: {
 		currentUser: state => {
@@ -22,6 +23,9 @@ const store = new Vuex.Store({
 		},
 		clientList: state => {
 			return state.clientList
+		},
+		issueList: state => {
+			return state.issueList
 		}
 	},
 	mutations: {
@@ -66,6 +70,19 @@ const store = new Vuex.Store({
 		},
 		DELETECHANNEL (state, payload) {
 			state.channelList.splice(payload.index, 1)
+		},
+		// issue
+		UPDATEISSUELIST (state, payload) {
+			state.issueList = payload.issueList
+		},
+		ADDISSUE (state, payload) {
+			state.issueList = [...state.issueList, payload.issue]
+		},
+		UPDATEISSUE (state, payload) {
+			state.issueList[payload.index] = payload.issue
+		},
+		DELETEISSUE (state, payload) {
+			state.issueList.splice(payload.index, 1)
 		}
 	},
 	actions: {

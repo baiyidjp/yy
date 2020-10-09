@@ -156,6 +156,14 @@
 						message: '请输入服务费费率(小数)',
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
+					}, {
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value < 1 && value >= 0
+						},
+						message: '请输入服务费费率(小数)',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
 					}],
 					companyIds: [{
 						// 自定义验证函数

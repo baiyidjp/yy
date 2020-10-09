@@ -32,7 +32,7 @@
 			this.checkAccess()
 		},
 		methods: {
-			...mapMutations(['UPDATECURRENTUSER', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST']),
+			...mapMutations(['UPDATECURRENTUSER', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST', 'UPDATEISSUELIST']),
 			checkAccess() {
 				const self = this
 				self.user = null;
@@ -69,9 +69,12 @@
 									self.UPDATECHANNELLIST({
 										channelList: result.channelList.data
 									})
+									self.UPDATEISSUELIST({
+										issueList: result.issueList.data
+									})
 									// 有权限使用小程序 跳转首页
 									uni.switchTab({
-										url: '../client/client_list'
+										url: '../issue/issue_list'
 									})
 								})
 							}

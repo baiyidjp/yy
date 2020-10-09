@@ -15,10 +15,15 @@ exports.main = async (event, context) => {
 		openid: event.openid
 	}).get()
 	
+	let issueList = await db.collection('issue_list').where({
+		openid: event.openid
+	}).get()
+	
 	//返回数据给客户端
 	return {
 		companyList,
 		clientList,
-		channelList
+		channelList,
+		issueList
 	}
 };

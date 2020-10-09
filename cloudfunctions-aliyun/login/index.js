@@ -25,7 +25,11 @@ exports.main = async (event, context) => {
 		name: '',
 		phone: '',
 		isApproved: false,
-		isAdmin: false
+		isAdmin: false,
+		createAt: null,
+		createBy: null,
+		updateAt: null,
+		updateBy: null
 	}
 	// 如果在后台有记录则返回记录的用户对象
 	if (users.data.length > 0) {

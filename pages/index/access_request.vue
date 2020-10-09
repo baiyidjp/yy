@@ -14,7 +14,9 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex'
+	import {
+		mapGetters
+	} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -23,7 +25,11 @@
 					name: '',
 					phone: '',
 					isApproved: false,
-					isAdmin: false
+					isAdmin: false,
+					createAt: null,
+					createBy: null,
+					updateAt: null,
+					updateBy: null
 				},
 				rules: {
 					name: [{
@@ -50,11 +56,14 @@
 			onClickSubmit() {
 				const self = this
 				self.user.openid = self.currentUser.openid
+				self.user.createBy = self.currentUser.openid
+				self.user.createAt = Date.now()
 				this.$refs.userForm.validate(valid => {
 					if (valid) {
 						uniCloud.callFunction({
-							name: 'user_create',
+							name: 'user',
 							data: {
+								type: 'add',
 								user: self.user
 							}
 						}).then(res => {
@@ -65,7 +74,7 @@
 								})
 								setTimeout(() => {
 									uni.navigateBack()
-								},1000)
+								}, 1000)
 							}
 						})
 					} else {
