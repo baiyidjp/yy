@@ -8,19 +8,19 @@
 				<u-input type="digit" v-model="client.signupPoint" placeholder="请输入服务费费率(小数)" />
 			</u-form-item>
 			<u-form-item label="税源地:" prop="companyList">
-				<u-input v-model="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="onClickCompanyList" />
+				<u-input :value="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="onClickCompanyList" />
 			</u-form-item>
 			<u-form-item label="渠道:" prop="channel">
-				<u-input v-model="checkedChannel.channelName" type="select" placeholder="请选择渠道(单选)" @click="onClickChannelList" />
+				<u-input :value="checkedChannel.channelName" type="select" placeholder="请选择渠道(单选)" @click="onClickChannelList" />
 			</u-form-item>
 			<u-form-item label="联系方式:" prop="contactInformation">
-				<u-input v-model="clientContactNames" type="select" placeholder="请输入客户联系方式" @click="showContactPop = true" />
+				<u-input :value="clientContactNames" type="select" placeholder="请输入客户联系方式" @click="showContactPop = true" />
 			</u-form-item>
 			<u-form-item label="开票信息:" prop="contactInformation">
-				<u-input v-model="clientInvoiceInfo" type="select" placeholder="请输入客户开票信息" @click="showInvoiceInfoPop = true" />
+				<u-input :value="clientInvoiceInfo" type="select" placeholder="请输入客户开票信息" @click="showInvoiceInfoPop = true" />
 			</u-form-item>
 			<u-form-item label="签约时间:" prop="signupTime">
-				<u-input v-model="client.signupTime" type="select" placeholder="请选择签约时间" @click="showCalendar = true" />
+				<u-input :value="client.signupTime" type="select" placeholder="请选择签约时间" @click="showCalendar = true" />
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="client.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
