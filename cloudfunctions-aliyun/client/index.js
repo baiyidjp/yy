@@ -27,8 +27,8 @@ exports.main = async (event, context) => {
 		const result = await db.collection('client_list').doc(client._id).update({
 			clientName: client.clientName,
 			signupPoint: client.signupPoint,
-			companyList: client.companyList,
-			channel: client.channel,
+			companyIds: client.companyIds,
+			channelId: client.channelId,
 			contactInformation: client.contactInformation,
 			invoiceInfo: client.invoiceInfo,
 			signupTime: client.signupTime,
