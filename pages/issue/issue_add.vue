@@ -9,8 +9,8 @@
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="服务费类型:">
 				<u-radio-group v-model="issue.companyServiceCharge">
-					<u-radio :name="checkedCompany.serviceCharge" @change="onChangeCompanyService">大额({{ checkedCompany.serviceCharge || 0 }})</u-radio>
-					<u-radio :name="checkedCompany.serviceChargeSmall" @change="onChangeCompanyService">小额({{ checkedCompany.serviceChargeSmall || 0 }})</u-radio>
+					<u-radio :name="checkedCompany.serviceCharge">大额({{ checkedCompany.serviceCharge || 0 }})</u-radio>
+					<u-radio :name="checkedCompany.serviceChargeSmall">小额({{ checkedCompany.serviceChargeSmall || 0 }})</u-radio>
 				</u-radio-group>
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="众包费:">
@@ -24,6 +24,9 @@
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="个人应得:">
 				<u-input :value="myAmount" type="number" :disabled="true" placeholder="个人所得" />
+			</u-form-item>
+			<u-form-item label="打款时间:" prop="makeMoneyTime">
+				<u-input :value="issue.makeMoneyTime" type="select" placeholder="请选择预计打款时间" @click="showCalendar = true" />
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="issue.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
@@ -44,7 +47,7 @@
 				</u-radio-group>
 			</view>
 		</u-popup>
-		<u-modal v-model="showCompanyModal" content="请先选择客户" @confirm="onClickConfirmClient"></u-modal>
+		<u-modal v-model="showCompanyModal" content="请先选择客户" @confirm="onClickClientList"></u-modal>
 		<u-popup v-model="showCompanyPop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
@@ -57,6 +60,7 @@
 				</u-radio-group>
 			</view>
 		</u-popup>
+		<u-calendar v-model="showCalendar" mode="date" max-date="2099-01-01" @change="onChangeDate"></u-calendar>
 	</view>
 </template>
 
@@ -73,6 +77,7 @@
 					companyId: '',
 					totalAmount: 0,
 					companyServiceCharge: 0,
+					makeMoneyTime: '',
 					mark: '',
 					openid: '',
 					createAt: null,
@@ -100,45 +105,15 @@
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
 					}],
-					serviceCharge: [{
-						required: true,
-						message: '请输入税源地服务费(小数)',
-						trigger: ['change', 'blur']
-					}, {
+					makeMoneyTime: [{
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
-							return value < 1 && value >= 0
+							return value.length > 0 ? true : false
 						},
-						message: '请输入税源地服务费(小数)',
+						message: '请选择打款时间',
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
-					}],
-					serviceChargeSmall: [{
-						required: true,
-						message: '请输入税源地小额服务费(小数)',
-						trigger: ['change', 'blur']
-					}, {
-						validator: (rule, value, callback) => {
-							// 返回true表示校验通过，返回false表示不通过
-							return value < 1 && value >= 0
-						},
-						message: '请输入税源地小额服务费(小数)',
-						// 可以单个或者同时写两个触发验证方式 
-						trigger: ['change', 'blur']
-					}],
-					tax: [{
-						required: true,
-						message: '请输入税源地个税(小数)',
-						trigger: ['change', 'blur']
-					}, {
-						validator: (rule, value, callback) => {
-							// 返回true表示校验通过，返回false表示不通过
-							return value < 1 && value >= 0
-						},
-						message: '请输入税源地个税(小数)',
-						// 可以单个或者同时写两个触发验证方式 
-						trigger: ['change', 'blur']
-					}],
+					}]
 				},
 				submiting: false,
 				showClientModal: false,
@@ -149,7 +124,8 @@
 				showCompanyModal: false,
 				showCompanyPop: false,
 				checkedClientCompanyList: [],
-				checkedCompany: null
+				checkedCompany: null,
+				showCalendar: false
 			}
 		},
 		onLoad(option) {
@@ -204,6 +180,11 @@
 		},
 		methods: {
 			...mapMutations(['ADDISSUE', 'UPDATEISSUE']),
+			onClickConfirmClient() {
+				uni.navigateTo({
+					url: '../client/client_add'
+				})
+			},
 			onClickClientList() {
 				if (this.clientList.length > 0) {
 					this.showClientPop = true
@@ -231,6 +212,9 @@
 				this.issue.companyId = id
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
+			},
+			onChangeDate(e) {
+				this.issue.makeMoneyTime = e.result
 			},
 			onClickSubmit() {
 				const self = this
