@@ -4,8 +4,11 @@
 			<u-form-item label="渠道名称:" prop="channelName">
 				<u-input v-model="channel.channelName" placeholder="请输入渠道名称" />
 			</u-form-item>
-			<u-form-item label="报价点数(%):" prop="quotationPoint">
-				<u-input type="digit" v-model="channel.quotationPoint" placeholder="请输入报价点数(0-100)" />
+			<u-form-item label="报价点数大额(%):" prop="quotationPoint">
+				<u-input type="digit" v-model="channel.quotationPoint" placeholder="请输入报价点数大额(0-100)" />
+			</u-form-item>
+			<u-form-item label="报价点数小额(%):" prop="quotationPointSmall">
+				<u-input type="digit" v-model="channel.quotationPointSmall" placeholder="请输入报价点数小额(0-100)" />
 			</u-form-item>
 			<u-form-item label="所属公司:" prop="channelCompany">
 				<u-input v-model="channel.channelCompany" placeholder="请输入渠道所属公司" />
@@ -30,6 +33,7 @@
 				channel: {
 					channelName: '',
 					quotationPoint: '',
+					quotationPointSmall: '',
 					channelCompany: '',
 					mark: '',
 					openid: '',
@@ -48,14 +52,27 @@
 					}],
 					quotationPoint: [{
 						required: true,
-						message: '请输入报价点数(0-100)',
+						message: '请输入报价点数大额(0-100)',
 						trigger: ['change', 'blur'],
 					}, {
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
 							return value < 100 && value >= 0
 						},
-						message: '请输入报价点数(0-100)',
+						message: '请输入报价点数大额(0-100)',
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur']
+					}],
+					quotationPointSmall: [{
+						required: true,
+						message: '请输入报价点数小额(0-100)',
+						trigger: ['change', 'blur'],
+					}, {
+						validator: (rule, value, callback) => {
+							// 返回true表示校验通过，返回false表示不通过
+							return value < 100 && value >= 0
+						},
+						message: '请输入报价点数小额(0-100)',
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
 					}],
