@@ -29,7 +29,7 @@ exports.main = async (event, context) => {
 			companyId: issue.companyId,
 			totalAmount: issue.totalAmount,
 			companyServiceCharge: issue.companyServiceCharge,
-			channelServiceCharge: issue.channelServiceCharge,
+			channelQuotationPoint: issue.channelQuotationPoint,
 			isFinish: issue.isFinish,
 			mark: issue.mark,
 			createAt: issue.createAt,
