@@ -94,29 +94,29 @@
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/issue/issue_list",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/issue.png",
+				"selectedIconPath": "static/tabbar/issue_active.png",
 				"text": "工单"
 			}, {
 				"pagePath": "pages/client/client_list",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/client.png",
+				"selectedIconPath": "static/tabbar/client_active.png",
 				"text": "客户"
 			}, {
 				"pagePath": "pages/channel/channel_list",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/channel.png",
+				"selectedIconPath": "static/tabbar/channel_active.png",
 				"text": "渠道"
 			}, {
 				"pagePath": "pages/company/company_list",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/company.png",
+				"selectedIconPath": "static/tabbar/company_active.png",
 				"text": "税源地"
 			},
 			{
 				"pagePath": "pages/my/my",
-				"iconPath": "static/logo.png",
-				"selectedIconPath": "static/logo.png",
+				"iconPath": "static/tabbar/me.png",
+				"selectedIconPath": "static/tabbar/me_active.png",
 				"text": "我的"
 			}
 		]
