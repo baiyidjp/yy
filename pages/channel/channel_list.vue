@@ -6,7 +6,7 @@
 					<view class="top-wrap">
 						<text class="title">{{ channel.channelName }}</text>
 						<view class="tag-wrap">
-							<u-tag text="删除" type="error" @click="onClickDelete(index)"></u-tag>
+							<u-tag text="删除" type="error" @click="onClickDelete(channel)"></u-tag>
 							<u-tag text="编辑" @click="onClickEdit(channel)"></u-tag>
 						</view>
 					</view>
@@ -21,7 +21,7 @@
 			</view>
 			<u-toast ref="uToast" />
 			<u-modal v-model="showDeleteModal" content="删除后无法恢复,请确认是否删除?" :show-cancel-button="true" confirm-text="删除"
-			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete"></u-modal>
+			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete" @cancel="onClickCancelDelete"></u-modal>
 		</view>
 	</block>
 	<block v-else>
@@ -41,7 +41,7 @@
 		data() {
 			return {
 				showDeleteModal: false,
-				deleteIndex: null
+				deleteChannel: null
 			};
 		},
 		onPullDownRefresh() {
@@ -76,25 +76,31 @@
 					url: `./channel_add?channel=${JSON.stringify(channel)}`
 				})
 			},
-			onClickDelete(index) {
-				this.deleteIndex = index
+			onClickDelete(channel) {
+				this.deleteChannel = channel
 				this.showDeleteModal = true
+			},
+			onClickCancelDelete() {
+				this.deleteChannel = null
 			},
 			onClickConfirmDelete() {
 				let self = this
-				const channel = self.channelList[self.deleteIndex]
+				if (!self.deleteChannel) {
+					return
+				}
+				const channel = self.deleteChannel
 				if (channel.openid === self.currentUser.openid) {
 					uniCloud.callFunction({
 						name: 'channel',
 						data: {
 							type: 'delete',
-							channel: self.channelList[self.deleteIndex]
+							channel: channel
 						}
 					}).then(res => {
 						self.showDeleteModal = false
 						if (res.result) {
 							self.DELETECHANNEL({
-								index: self.deleteIndex
+								channel: channel
 							})
 							self.$refs.uToast.show({
 								title: '删除成功',

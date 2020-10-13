@@ -7,7 +7,7 @@
 		<text class="sub-title">渠道: {{ checkedChannel.channelName }}</text>
 		<text class="sub-title">税源地: {{ checkedCompany.companyName }}</text>
 		<text class="sub-title">众包费: {{ issue.totalAmount }}</text>
-		<text class="sub-title">服务费: {{ serviceCharge }}</text>
+		<text class="sub-title">税源地应得: {{ serviceChargeAmount }}</text>
 		<text class="sub-title">渠道应得: {{ channelAmount }}</text>
 		<text class="sub-title">个人应得: {{ myAmount }}</text>
 		<block v-for="rebate in checkedCompany.rebates" :key="rebate.date">
@@ -53,7 +53,7 @@
 					return	this.channelList.find(channle => channle._id === this.checkedClient.channelId)
 				}
 			},
-			serviceCharge() {
+			serviceChargeAmount() {
 				if (this.issue) {
 					const amount = this.issue.totalAmount * (this.issue.companyServiceCharge * 0.01)
 					return amount.toFixed(2)
@@ -62,7 +62,7 @@
 			},
 			channelAmount() {
 				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.checkedChannel.quotationPoint *
+					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.channelQuotationPoint *
 							0.01) *
 						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
@@ -71,7 +71,7 @@
 			},
 			myAmount() {
 				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedChannel.quotationPoint * 0.01 - this.issue.companyServiceCharge *
+					const amount = this.issue.totalAmount * (this.issue.channelQuotationPoint * 0.01 - this.issue.companyServiceCharge *
 							0.01) *
 						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)

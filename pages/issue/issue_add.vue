@@ -11,7 +11,7 @@
 				<u-input type="select" :value="checkedCompanyName" placeholder="请选择税源地" @click="onClickCompanyList" />
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="服务费类型:">
-				<u-radio-group v-model="issue.companyServiceCharge">
+				<u-radio-group v-model="issue.companyServiceCharge" @change="onChangeCompanyServiceCharge">
 					<u-radio :name="checkedCompany.serviceCharge">大额({{ checkedCompany.serviceCharge || 0 }}%)</u-radio>
 					<u-radio :name="checkedCompany.serviceChargeSmall">小额({{ checkedCompany.serviceChargeSmall || 0 }}%)</u-radio>
 				</u-radio-group>
@@ -19,8 +19,11 @@
 			<u-form-item v-if="checkedCompany" label="众包费:" prop="totalAmount">
 				<u-input v-model="issue.totalAmount" type="digit" placeholder="请输入众包费(数字)" />
 			</u-form-item>
-			<u-form-item v-if="checkedCompany" label="服务费:">
-				<u-input :value="serviceCharge" type="digit" :disabled="true" placeholder="税源地服务费" />
+			<u-form-item v-if="checkedCompany" label="税源地应得:">
+				<u-input :value="serviceChargeAmount" type="digit" :disabled="true" placeholder="税源地服务费" />
+			</u-form-item>
+			<u-form-item v-if="checkedCompany" label="渠道价格:">
+				<u-input :value="channelQuotationPoint" :disabled="true" placeholder="渠道价格" />
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="渠道应得:">
 				<u-input :value="channelAmount" type="number" :disabled="true" placeholder="渠道应得费" />
@@ -80,6 +83,7 @@
 					companyId: '',
 					totalAmount: 0,
 					companyServiceCharge: 0,
+					channelQuotationPoint: 0,
 					isFinish: false,
 					mark: '',
 					openid: '',
@@ -181,13 +185,16 @@
 			checkedCompanyName() {
 				return this.checkedCompany ? this.checkedCompany.companyName : ''
 			},
-			serviceCharge() {
+			serviceChargeAmount() {
 				const amount = this.issue.totalAmount * (this.issue.companyServiceCharge * 0.01)
 				return amount.toFixed(2)
 			},
+			channelQuotationPoint() {
+				return this.issue.channelQuotationPoint + '%'
+			},
 			channelAmount() {
 				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.checkedChannel.quotationPoint *
+					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.channelQuotationPoint *
 							0.01) *
 						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
@@ -196,7 +203,7 @@
 			},
 			myAmount() {
 				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedChannel.quotationPoint * 0.01 - this.issue.companyServiceCharge *
+					const amount = this.issue.totalAmount * (this.issue.channelQuotationPoint * 0.01 - this.issue.companyServiceCharge *
 							0.01) *
 						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
@@ -239,7 +246,16 @@
 				this.issue.companyId = id
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
+				this.issue.channelQuotationPoint = this.checkedChannel.quotationPoint
 				this.showCompanyPop = false
+			},
+			onChangeCompanyServiceCharge(value) {
+				if (value === this.checkedCompany.serviceCharge) {
+					this.issue.channelQuotationPoint = this.checkedChannel.quotationPoint
+				}
+				if (value === this.checkedCompany.serviceChargeSmall) {
+					this.issue.channelQuotationPoint = this.checkedChannel.quotationPointSmall
+				}
 			},
 			onClickSubmit() {
 				const self = this

@@ -44,7 +44,8 @@ const store = new Vuex.Store({
 			state.companyList.splice(index, 1, payload.company)
 		},
 		DELETECOMPANY (state, payload) {
-			state.companyList.splice(payload.index, 1)
+			const index = state.companyList.findIndex(company => company._id === payload.company._id)
+			state.companyList.splice(index, 1)
 		},
 		// client
 		UPDATECLIENTLIST (state, payload) {
@@ -58,7 +59,8 @@ const store = new Vuex.Store({
 			state.clientList.splice(index, 1, payload.client)
 		},
 		DELETECLIENT (state, payload) {
-			state.clientList.splice(payload.index, 1)
+			const index = state.clientList.findIndex(client => client._id === payload.client._id)
+			state.clientList.splice(index, 1)
 		},
 		// channel
 		UPDATECHANNELLIST (state, payload) {
@@ -72,7 +74,8 @@ const store = new Vuex.Store({
 			state.channelList.splice(index, 1, payload.channel)
 		},
 		DELETECHANNEL (state, payload) {
-			state.channelList.splice(payload.index, 1)
+			const index = state.channelList.findIndex(channel => channel._id === payload.channel._id)
+			state.channelList.splice(index, 1)
 		},
 		// issue
 		UPDATEISSUELIST (state, payload) {
@@ -86,7 +89,8 @@ const store = new Vuex.Store({
 			state.issueList.splice(index, 1, payload.issue)
 		},
 		DELETEISSUE (state, payload) {
-			state.issueList.splice(payload.index, 1)
+			const index = state.issueList.findIndex(issue => issue._id === payload.issue._id)
+			state.issueList.splice(index, 1)
 		}
 	},
 	actions: {

@@ -2,14 +2,14 @@
 	<block v-if="issueList.length > 0">
 		<view class="wrap">
 			<block v-for="(issue, index) in issueList" :key="issue._id">
-				<issue-item :issue="issue" :index="index" @delete="onClickDelete"></issue-item>
+				<issue-item :issue="issue" @delete="onClickDelete(issue)"></issue-item>
 			</block>
 			<view class="add-wrap" @click="onClickAddButton">
 				<u-icon name="plus" color="#ffffff" size="60"></u-icon>
 			</view>
 			<u-toast ref="uToast" />
 			<u-modal v-model="showDeleteModal" content="删除后无法恢复,请确认是否删除?" :show-cancel-button="true" confirm-text="删除"
-			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete"></u-modal>
+			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete" @cancel="onClickCancelDelete"></u-modal>
 		</view>
 	</block>
 	<block v-else>
@@ -30,7 +30,7 @@
 		data() {
 			return {
 				showDeleteModal: false,
-				deleteIndex: null
+				deleteIssue: null
 			};
 		},
 		onPullDownRefresh() {
@@ -68,13 +68,19 @@
 					url: `./issue_add?issue=${JSON.stringify(issue)}`
 				})
 			},
-			onClickDelete(index) {
-				this.deleteIndex = index
+			onClickDelete(issue) {
+				this.deleteIssue = issue
 				this.showDeleteModal = true
+			},
+			onClickCancelDelete() {
+				this.deleteIssue = null
 			},
 			onClickConfirmDelete() {
 				let self = this
-				const issue = self.issueList[self.deleteIndex]
+				if (!self.deleteIssue) {
+					return
+				}
+				const issue = self.deleteIssue
 				if (issue.openid === self.currentUser.openid) {
 					uniCloud.callFunction({
 						name: 'issue',
@@ -86,7 +92,7 @@
 						self.showDeleteModal = false
 						if (res.result) {
 							self.DELETEISSUE({
-								index: self.deleteIndex
+								issue: issue
 							})
 							self.$refs.uToast.show({
 								title: '删除成功',

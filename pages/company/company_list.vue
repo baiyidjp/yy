@@ -6,7 +6,7 @@
 					<view class="top-wrap">
 						<text class="title">{{ company.companyName }}</text>
 						<view class="tag-wrap">
-							<u-tag text="删除" type="error" @click="onClickDelete(index)"></u-tag>
+							<u-tag text="删除" type="error" @click="onClickDelete(company)"></u-tag>
 							<u-tag text="编辑" @click="onClickEdit(company)"></u-tag>
 						</view>
 					</view>
@@ -22,7 +22,7 @@
 			</view>
 			<u-toast ref="uToast" />
 			<u-modal v-model="showDeleteModal" content="删除后无法恢复,请确认是否删除?" :show-cancel-button="true" confirm-text="删除"
-			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete"></u-modal>
+			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete" @cancel="onClickCancelDelete"></u-modal>
 		</view>
 	</block>
 	<block v-else>
@@ -42,7 +42,7 @@
 		data() {
 			return {
 				showDeleteModal: false,
-				deleteIndex: null
+				deleteCompany: null
 			};
 		},
 		onPullDownRefresh() {
@@ -77,25 +77,31 @@
 					url: `./company_add?company=${JSON.stringify(company)}`
 				})
 			},
-			onClickDelete(index) {
-				this.deleteIndex = index
+			onClickDelete(company) {
+				this.deleteCompany = company
 				this.showDeleteModal = true
+			},
+			onClickCancelDelete() {
+				this.deleteCompany = null
 			},
 			onClickConfirmDelete() {
 				let self = this
-				const company = self.companyList[self.deleteIndex]
+				if (!self.deleteCompany) {
+					return
+				}
+				const company = self.deleteCompany
 				if (company.openid === self.currentUser.openid) {
 					uniCloud.callFunction({
 						name: 'company',
 						data: {
 							type: 'delete',
-							company: self.companyList[self.deleteIndex]
+							company: company
 						}
 					}).then(res => {
 						self.showDeleteModal = false
 						if (res.result) {
 							self.DELETECOMPANY({
-								index: self.deleteIndex
+								company: company
 							})
 							self.$refs.uToast.show({
 								title: '删除成功',

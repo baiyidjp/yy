@@ -47,7 +47,7 @@
 		},
 		methods: {
 			onClickDelete() {
-				this.$emit('delete', this.index)
+				this.$emit('delete')
 			},
 			onClickDetail() {
 				uni.navigateTo({

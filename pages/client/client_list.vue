@@ -2,14 +2,14 @@
 	<block v-if="clientList.length > 0">
 		<view class="wrap">
 			<block v-for="(client, index) in clientList" :key="client._id">
-				<client-item :client="client" :index="index" @delete="onClickDelete"></client-item>
+				<client-item :client="client" @delete="onClickDelete(client)"></client-item>
 			</block>
 			<view class="add-wrap" @click="onClickAddButton">
 				<u-icon name="plus" color="#ffffff" size="60"></u-icon>
 			</view>
 			<u-toast ref="uToast" />
 			<u-modal v-model="showDeleteModal" content="删除后无法恢复,请确认是否删除?" :show-cancel-button="true" confirm-text="删除"
-			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete"></u-modal>
+			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete" @cancel="onClickCancelDelete"></u-modal>
 		</view>
 	</block>
 	<block v-else>
@@ -30,7 +30,7 @@
 		data() {
 			return {
 				showDeleteModal: false,
-				deleteIndex: null
+				deleteClient: null
 			}
 		},
 		components: {
@@ -68,25 +68,31 @@
 					url: `./client_add?client=${JSON.stringify(client)}`
 				})
 			},
-			onClickDelete(index) {
-				this.deleteIndex = index
+			onClickDelete(client) {
+				this.deleteClient = client
 				this.showDeleteModal = true
+			},
+			onClickCancelDelete() {
+				this.deleteClient = null
 			},
 			onClickConfirmDelete() {
 				let self = this
-				const client = self.clientList[self.deleteIndex]
+				if (!self.deleteClient) {
+					return
+				}
+				const client = self.deleteClient
 				if (client.openid === self.currentUser.openid) {
 					uniCloud.callFunction({
 						name: 'client',
 						data: {
 							type: 'delete',
-							client: self.clientList[self.deleteIndex]
+							client: client
 						}
 					}).then(res => {
 						self.showDeleteModal = false
 						if (res.result) {
 							self.DELETECLIENT({
-								index: self.deleteIndex
+								client: client
 							})
 							self.$refs.uToast.show({
 								title: '删除成功',
