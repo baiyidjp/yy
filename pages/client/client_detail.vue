@@ -4,7 +4,7 @@
 			<text class="title">{{ client.clientName }}</text>
 			<u-tag text="编辑" @click="onClickEdit"></u-tag>
 		</view>
-		<text class="sub-title">签约点位: {{ client.signupPoint }}</text>
+		<text class="sub-title">签约点位: {{ client.signupPoint }}%</text>
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
 		<text class="sub-title">渠道: {{ clientChannelName }}</text>
 		<text class="sub-title">联系人: {{ client.contactInformation.name }}</text>

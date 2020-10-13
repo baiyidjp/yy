@@ -1,20 +1,23 @@
 <template>
 	<view class="wrap">
-		<u-form class="form-wrap" :model="issue" ref="issueForm" label-width="160">
-			<u-form-item label="工单客户:" prop="clientName">
+		<u-form class="form-wrap" :model="issue" ref="issueForm" label-width="auto">
+			<u-form-item label="工单客户:" prop="clientId">
 				<u-input type="select" :value="checkedClient.clientName" placeholder="请选择客户" @click="onClickClientList" />
 			</u-form-item>
-			<u-form-item label="税源地:" prop="companyName">
+			<u-form-item v-if="checkedClient" label="渠道:">
+				<u-input :value="clientChannelName" placeholder="渠道" :disabled="true"/>
+			</u-form-item>
+			<u-form-item label="税源地:" prop="companyId">
 				<u-input type="select" :value="checkedCompanyName" placeholder="请选择税源地" @click="onClickCompanyList" />
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="服务费类型:">
 				<u-radio-group v-model="issue.companyServiceCharge">
-					<u-radio :name="checkedCompany.serviceCharge">大额({{ checkedCompany.serviceCharge || 0 }})</u-radio>
-					<u-radio :name="checkedCompany.serviceChargeSmall">小额({{ checkedCompany.serviceChargeSmall || 0 }})</u-radio>
+					<u-radio :name="checkedCompany.serviceCharge">大额({{ checkedCompany.serviceCharge || 0 }}%)</u-radio>
+					<u-radio :name="checkedCompany.serviceChargeSmall">小额({{ checkedCompany.serviceChargeSmall || 0 }}%)</u-radio>
 				</u-radio-group>
 			</u-form-item>
-			<u-form-item v-if="checkedCompany" label="众包费:">
-				<u-input v-model="issue.totalAmount" type="digit" placeholder="请输入总金额(数字)" />
+			<u-form-item v-if="checkedCompany" label="众包费:" prop="totalAmount">
+				<u-input v-model="issue.totalAmount" type="digit" placeholder="请输入众包费(数字)" />
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="服务费:">
 				<u-input :value="serviceCharge" type="digit" :disabled="true" placeholder="税源地服务费" />
@@ -25,8 +28,8 @@
 			<u-form-item v-if="checkedCompany" label="个人应得:">
 				<u-input :value="myAmount" type="number" :disabled="true" placeholder="个人所得" />
 			</u-form-item>
-			<u-form-item label="打款时间:" prop="makeMoneyTime">
-				<u-input :value="issue.makeMoneyTime" type="select" placeholder="请选择预计打款时间" @click="showCalendar = true" />
+			<u-form-item v-if="checkedCompany" label="返佣时间:" v-for="rebate in checkedCompany.rebates" :key="rebate.date">
+				<text>{{ rebate.date }} 返佣比例: {{ rebate.scale}}</text>
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="issue.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
@@ -77,7 +80,7 @@
 					companyId: '',
 					totalAmount: 0,
 					companyServiceCharge: 0,
-					makeMoneyTime: '',
+					isFinish: false,
 					mark: '',
 					openid: '',
 					createAt: null,
@@ -87,7 +90,11 @@
 				},
 				isEdit: false,
 				rules: {
-					clientName: [{
+					clientId: [{
+						required: true,
+						message: '请选择客户(单选)',
+						trigger: ['change', 'blur'],
+					}, {
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
 							return value.length > 0
@@ -96,7 +103,11 @@
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
 					}],
-					companyName: [{
+					companyId: [{
+						required: true,
+						message: '请选择税源地(单选)',
+						trigger: ['change', 'blur'],
+					}, {
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
 							return value.length > 0
@@ -105,12 +116,16 @@
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
 					}],
-					makeMoneyTime: [{
+					totalAmount: [{
+						required: true,
+						message: '请输入众包费(数字)',
+						trigger: ['change', 'blur'],
+					}, {
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
-							return value.length > 0 ? true : false
+							return value > 0
 						},
-						message: '请选择打款时间',
+						message: '请输入众包费(数字)',
 						// 可以单个或者同时写两个触发验证方式 
 						trigger: ['change', 'blur']
 					}]
@@ -154,25 +169,36 @@
 		},
 		computed: {
 			...mapGetters(['currentUser', 'issueList', 'clientList', 'channelList', 'companyList']),
+			clientChannelName() {
+				if (this.checkedClient) {
+					const channelInfo = this.channelList.find(channel => channel._id === this.checkedClient.channelId)
+					if (channelInfo) {
+						return channelInfo.channelName
+					}
+				}
+				return '无/被删除'
+			},
 			checkedCompanyName() {
 				return this.checkedCompany ? this.checkedCompany.companyName : ''
 			},
 			serviceCharge() {
-				const amount = this.issue.totalAmount * this.issue.companyServiceCharge
+				const amount = this.issue.totalAmount * (this.issue.companyServiceCharge * 0.01)
 				return amount.toFixed(2)
 			},
 			channelAmount() {
 				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint - this.checkedChannel.quotationPoint) *
-						(1 - this.checkedCompany.tax)
+					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.checkedChannel.quotationPoint *
+							0.01) *
+						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
 				}
 				return 0
 			},
 			myAmount() {
 				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedChannel.quotationPoint - this.issue.companyServiceCharge) *
-						(1 - this.checkedCompany.tax)
+					const amount = this.issue.totalAmount * (this.checkedChannel.quotationPoint * 0.01 - this.issue.companyServiceCharge *
+							0.01) *
+						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
 				}
 				return 0
@@ -200,6 +226,7 @@
 				// 清空已选择的税源地
 				this.issue.companyId = ''
 				this.checkedCompany = null
+				this.showClientPop = false
 			},
 			onClickCompanyList() {
 				if (this.checkedClientCompanyList.length > 0) {
@@ -212,9 +239,7 @@
 				this.issue.companyId = id
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
-			},
-			onChangeDate(e) {
-				this.issue.makeMoneyTime = e.result
+				this.showCompanyPop = false
 			},
 			onClickSubmit() {
 				const self = this

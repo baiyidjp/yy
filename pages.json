@@ -69,6 +69,11 @@
 			"style": {
 				"navigationBarTitleText": "创建工单"
 			}
+		},  {
+			"path": "pages/issue/issue_detail",
+			"style": {
+				"navigationBarTitleText": "工单详情"
+			}
 		}, {
 			"path": "pages/user/user_list",
 			"style": {

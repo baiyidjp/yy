@@ -10,7 +10,7 @@
 							<u-tag text="编辑" @click="onClickEdit(channel)"></u-tag>
 						</view>
 					</view>
-					<text class="sub-title">报价点位: {{ channel.quotationPoint }}</text>
+					<text class="sub-title">报价点位: {{ channel.quotationPoint }}%</text>
 					<text class="sub-title">所属公司: {{ channel.channelCompany }}</text>
 					<text class="sub-title">备注: {{ channel.mark.length > 0 ? channel.mark : '无' }}</text>
 				</view>

@@ -2,19 +2,7 @@
 	<block v-if="issueList.length > 0">
 		<view class="wrap">
 			<block v-for="(issue, index) in issueList" :key="issue._id">
-				<view class="issue-item">
-					<view class="top-wrap">
-						<text class="title">{{ issue.issueName }}</text>
-						<view class="tag-wrap">
-							<u-tag text="删除" type="error" @click="onClickDelete(index)"></u-tag>
-							<u-tag text="编辑" @click="onClickEdit(issue)"></u-tag>
-						</view>
-					</view>
-					<text class="sub-title">大额服务费比例: {{ issue.serviceCharge }}</text>
-					<text class="sub-title">小额服务费比例: {{ issue.serviceChargeSmall }}</text>
-					<text class="sub-title">个税比例: {{ issue.tax }}</text>
-					<text class="sub-title">备注: {{ issue.mark.length > 0 ? issue.mark : '无' }}</text>
-				</view>
+				<issue-item :issue="issue" :index="index" @delete="onClickDelete"></issue-item>
 			</block>
 			<view class="add-wrap" @click="onClickAddButton">
 				<u-icon name="plus" color="#ffffff" size="60"></u-icon>
@@ -37,6 +25,7 @@
 		mapGetters,
 		mapMutations
 	} from 'vuex'
+	import IssueItem from './issue_item.vue'
 	export default {
 		data() {
 			return {
@@ -60,6 +49,9 @@
 				})
 				uni.stopPullDownRefresh()
 			})
+		},
+		components: {
+			IssueItem
 		},
 		computed: {
 			...mapGetters(['currentUser', 'issueList'])

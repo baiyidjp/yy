@@ -1,22 +1,22 @@
 <template>
 	<view class="wrap">
-		<u-form class="form-wrap" :model="company" ref="companyForm" label-width="160">
+		<u-form class="form-wrap" :model="company" ref="companyForm" label-width="auto">
 			<u-form-item label="税源地名称:" prop="companyName">
 				<u-input v-model="company.companyName" placeholder="请输入税源地名称" />
 			</u-form-item>
-			<u-form-item label="大额服务费:" prop="serviceCharge">
-				<u-input type="digit" v-model="company.serviceCharge" placeholder="请输入税源地大额服务费(小数)" />
+			<u-form-item label="大额服务费(%):" prop="serviceCharge">
+				<u-input type="digit" v-model="company.serviceCharge" placeholder="请输入税源地大额服务费(0-100)" />
 			</u-form-item>
-			<u-form-item label="小额服务费:" prop="serviceChargeSmall">
-				<u-input type="digit" v-model="company.serviceChargeSmall" placeholder="请输入税源地小额服务费(小数)" />
+			<u-form-item label="小额服务费(%):" prop="serviceChargeSmall">
+				<u-input type="digit" v-model="company.serviceChargeSmall" placeholder="请输入税源地小额服务费(0-100)" />
 			</u-form-item>
-			<u-form-item label="个税:" prop="tax">
-				<u-input type="digit" v-model="company.tax" placeholder="请输入税源地个税(小数)" />
+			<u-form-item label="个税(%):" prop="tax">
+				<u-input type="digit" v-model="company.tax" placeholder="请输入税源地个税(0-100)" />
 			</u-form-item>
 			<u-form-item v-for="(rebate, index) in company.rebates" :key="index" label="返佣信息:">
 				<view class="rebate-wrap">
 					<u-input type="select" v-model="rebate.date" placeholder="请选择返佣时间" @click="onClickRebateDate(index)"/>
-					<u-input type="digit" style="width: 100px" v-model="rebate.amount" placeholder="返佣(小数)" />
+					<u-input type="digit" style="width: 100px" v-model="rebate.scale" placeholder="返佣比例(%)(0-100)" />
 					<u-icon v-if="index < 2 & index === company.rebates.length-1" name="plus-circle" size="50" @click="onClickPlusIcon"></u-icon>
 					<u-icon v-if="index > 0 & index === company.rebates.length-1" :index=index name="minus-circle" size="50" @click="onClickMinusIcon"></u-icon>
 				</view>
@@ -27,12 +27,12 @@
 		</u-form>
 		<u-button class="submit-button" :loading="submiting" :disabled="submiting" @click="onClickSubmit" type="primary">提交</u-button>
 		<u-toast ref="uToast" />
-		<u-popup v-model="showPop" mode="center" border-radius="10" width="95%" :closeable="true">
+		<u-popup v-model="showRebatePop" mode="center" border-radius="10" width="95%" :closeable="true">
 			<view class="show-pop">
 				<view class="show-pop-title">
 					请选择返佣时间(单选)
 				</view>
-				<u-radio-group v-model="currentType">
+				<u-radio-group v-model="currentRebateType">
 					<u-radio v-for="(date, index) in rebateDates" :key="index" :name="index" @change="onChangeRebateDate">
 						{{date.date}}
 					</u-radio>
@@ -54,10 +54,10 @@
 					companyName: '',
 					serviceCharge: '',
 					serviceChargeSmall: '',
-					tax: '0.015',
+					tax: '1.5',
 					rebates: [{
 						date: null,
-						amount: null
+						scale: null
 					}],
 					mark: '',
 					openid: '',
@@ -77,11 +77,12 @@
 					serviceCharge: [{
 						required: true,
 						message: '请输入税源地服务费(小数)',
-						trigger: ['change', 'blur']
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur'],
 					}, {
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
-							return value < 1 && value >= 0
+							return value < 100 && value >= 0
 						},
 						message: '请输入税源地服务费(小数)',
 						// 可以单个或者同时写两个触发验证方式 
@@ -90,11 +91,12 @@
 					serviceChargeSmall: [{
 						required: true,
 						message: '请输入税源地小额服务费(小数)',
-						trigger: ['change', 'blur']
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur'],
 					}, {
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
-							return value < 1 && value >= 0
+							return value < 100 && value >= 0
 						},
 						message: '请输入税源地小额服务费(小数)',
 						// 可以单个或者同时写两个触发验证方式 
@@ -103,11 +105,12 @@
 					tax: [{
 						required: true,
 						message: '请输入税源地个税(小数)',
-						trigger: ['change', 'blur']
+						// 可以单个或者同时写两个触发验证方式 
+						trigger: ['change', 'blur'],
 					}, {
 						validator: (rule, value, callback) => {
 							// 返回true表示校验通过，返回false表示不通过
-							return value < 1 && value >= 0
+							return value < 100 && value >= 0
 						},
 						message: '请输入税源地个税(小数)',
 						// 可以单个或者同时写两个触发验证方式 
@@ -121,16 +124,16 @@
 					},
 					{
 						type: 1,
-						date: '一周内'
+						date: '下周二'
 					},
 					{
 						type: 2,
-						date: '下月25号'
+						date: '次月25号'
 					},
 				],
-				currentIndex: 0,
-				showPop: false,
-				currentType: -1,
+				currentRebateIndex: 0,
+				showRebatePop: false,
+				currentRebateType: -1,
 				submiting: false
 			}
 		},
@@ -163,13 +166,14 @@
 				this.company.rebates.splice(index, 1)
 			},
 			onClickRebateDate(index) {
-				this.currentIndex = index
-				this.showPop = true
-				this.currentType = -1
+				this.currentRebateIndex = index
+				this.showRebatePop = true
+				this.currentRebateType = -1
 			},
 			onChangeRebateDate(index) {
 				const rebateDate = this.rebateDates[index].date
-				this.company.rebates[this.currentIndex].date = rebateDate
+				this.company.rebates[this.currentRebateIndex].date = rebateDate
+				this.showRebatePop = false
 			},
 			onClickSubmit() {
 				const self = this

@@ -4,7 +4,7 @@
 			<text class="title">{{ client.clientName }}</text>
 			<u-tag text="删除" type="error" @tap.native.stop="onClickDelete"></u-tag>
 		</view>
-		<text class="sub-title">签约点位: {{ client.signupPoint }}</text>
+		<text class="sub-title">签约点位: {{ client.signupPoint }}%</text>
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
 		<text class="sub-title">渠道: {{ clientChannelName }}</text>
 		<text class="sub-title">备注: {{ client.mark.length > 0 ? client.mark : '无' }}</text>
