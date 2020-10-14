@@ -29,7 +29,7 @@ exports.main = async (event, context) => {
 			serviceCharge: company.serviceCharge,
 			serviceChargeSmall: company.serviceChargeSmall,
 			tax: company.tax,
-			rebates: company.rebates,
+			rebateDateList: company.rebateDateList,
 			mark: company.mark,
 			createAt: company.createAt,
 			createBy: company.createBy,

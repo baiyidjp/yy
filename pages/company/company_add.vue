@@ -13,12 +13,12 @@
 			<u-form-item label="个税(%):" prop="tax">
 				<u-input type="digit" v-model="company.tax" placeholder="请输入税源地个税(0-100)" />
 			</u-form-item>
-			<u-form-item v-for="(rebate, index) in company.rebateDateList" :key="index" label="返佣信息:">
+			<u-form-item v-for="(rebate, index) in company.rebateDateList" :key="index" label="返佣时间:">
 				<view class="rebate-wrap">
-					<u-input type="select" v-model="rebate.date" placeholder="请选择返佣时间" @click="onClickRebateDate(index)"/>
+					<u-input type="select" v-model="rebate.date" placeholder="请选择返佣时间" @click="onClickRebateDate(index)" />
 					<u-input type="digit" style="width: 100px" v-model="rebate.scale" placeholder="返佣比例(%)(0-100)" />
-					<u-icon v-if="index < rebateDateList.length-1 & index === company.rebateDateList.length-1" name="plus-circle" size="50" @click="onClickPlusIcon"></u-icon>
-					<u-icon v-if="index > 0 & index === company.rebateDateList.length-1" :index=index name="minus-circle" size="50" @click="onClickMinusIcon"></u-icon>
+					<u-icon v-if="index === 0 && company.rebateDateList.length === 1" name="plus-circle" size="50" @click="onClickPlusIcon"></u-icon>
+					<u-icon v-if="index === 1" name="minus-circle" size="50" @click="onClickMinusIcon"></u-icon>
 				</view>
 			</u-form-item>
 			<u-form-item label="备注:">
@@ -33,9 +33,7 @@
 					请选择返佣时间(单选)
 				</view>
 				<u-radio-group v-model="currentRebateType">
-					<u-radio v-for="(rebateDate, index) in rebateDateList" :key="index" :name="index" @change="onChangeRebateDate">
-						{{rebateDate.date}}
-					</u-radio>
+					<u-radio v-for="(rebateDate, index) in rebateDateList" :key="index" :name="rebateDate.type" @change="onChangeRebateDate">{{rebateDate.date}}</u-radio>
 				</u-radio-group>
 			</view>
 		</u-popup>
@@ -116,7 +114,7 @@
 				},
 				currentRebateIndex: 0,
 				showRebatePop: false,
-				currentRebateType: -1,
+				currentRebateType: 0,
 				submiting: false
 			}
 		},
@@ -148,26 +146,28 @@
 		methods: {
 			...mapMutations(['ADDCOMPANY', 'UPDATECOMPANY']),
 			onClickPlusIcon() {
-				this.company.rebateDateList.splice(this.company.rebateDateList.length, 0 , {
-					date: null,
-					amount: null
-				})
+				if (this.company.rebateDateList.length > 2) {
+					return
+				}
+				this.company.rebateDateList.splice(this.company.rebateDateList.length, 0, {})
 			},
 			onClickMinusIcon(index) {
-				this.company.rebateDateList.splice(index, 1)
+				this.company.rebateDateList.splice(1, 1)
 			},
 			onClickRebateDate(index) {
 				this.currentRebateIndex = index
 				this.showRebatePop = true
 				this.currentRebateType = -1
 			},
-			onChangeRebateDate(index) {
-				const rebateDate = this.rebateDateList[index]
-				this.company.rebateDateList[this.currentRebateIndex] = {
-					_id: rebateDate._id,
-					type: rebateDate.type,
-					date: rebateDate.date,
-					scale: rebateDate.scale
+			onChangeRebateDate(type) {
+				const rebateDate = this.rebateDateList.find(rebate => rebate.type === type)
+				if (rebateDate) {
+					this.company.rebateDateList[this.currentRebateIndex] = {
+						_id: rebateDate._id,
+						type: rebateDate.type,
+						date: rebateDate.date,
+						scale: rebateDate.scale
+					}
 				}
 				this.showRebatePop = false
 			},
@@ -239,12 +239,12 @@
 		display: flex;
 		flex-direction: column;
 	}
-	
+
 	.rebate-wrap {
 		display: flex;
 		align-items: center;
 	}
-	
+
 	.rebate-wrap u-input {
 		margin-right: 5px;
 	}
@@ -261,7 +261,7 @@
 		text-align: center;
 		margin-bottom: 20px;
 	}
-	
+
 	.submit-button {
 		margin-top: 20px;
 	}

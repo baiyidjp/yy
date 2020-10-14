@@ -5,7 +5,7 @@
 				<u-input type="select" :value="checkedClient.clientName" placeholder="请选择客户" @click="onClickClientList" />
 			</u-form-item>
 			<u-form-item v-if="checkedClient" label="渠道:">
-				<u-input :value="clientChannelName" placeholder="渠道" :disabled="true"/>
+				<u-input :value="clientChannelName" placeholder="渠道" :disabled="true" />
 			</u-form-item>
 			<u-form-item label="税源地:" prop="companyId">
 				<u-input type="select" :value="checkedCompanyName" placeholder="请选择税源地" @click="onClickCompanyList" />
@@ -31,8 +31,8 @@
 			<u-form-item v-if="checkedCompany" label="个人应得:">
 				<u-input :value="myAmount" type="number" :disabled="true" placeholder="个人所得" />
 			</u-form-item>
-			<u-form-item v-if="checkedCompany" label="返佣时间:" v-for="rebateInfo in issue.rebateInfoList" :key="rebateInfo.date">
-				<text>{{ rebateInfo.date }} 返佣比例: {{ rebateInfo.scale}}</text>
+			<u-form-item v-if="checkedCompany" label="返佣时间:" v-for="(rebateInfo, index) in issue.rebateInfoList" :key="rebateInfo.date">
+				<text>{{ rebateInfo.date }} 应返佣: {{ index === 0 ? firstRebateAmount : secondRebateAmount}}</text>
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="issue.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
@@ -79,15 +79,25 @@
 		data() {
 			return {
 				issue: {
+					// 客户的id
 					clientId: '',
+					// 税源地id
 					companyId: '',
+					// 众包费
 					totalAmount: 0,
+					// 税源地的服务费
 					companyServiceCharge: 0,
+					// 渠道的服务费
 					channelQuotationPoint: 0,
+					// 税源地应得
 					serviceChargeAmount: 0,
+					// 渠道应得
 					channelAmount: 0,
+					// 个人应得
 					myAmount: 0,
+					// 返佣信息 
 					rebateInfoList: [],
+					// 工单是否完成 
 					isFinish: false,
 					mark: '',
 					openid: '',
@@ -138,16 +148,27 @@
 						trigger: ['change', 'blur']
 					}]
 				},
+				// 提交中
 				submiting: false,
+				// 展示无客户的提示
 				showClientModal: false,
+				// 选择客户
 				showClientPop: false,
+				// 可供选择的客户列表
 				issueClientList: [],
+				// 选中的客户
 				checkedClient: null,
+				// 选中的渠道
 				checkedChannel: null,
+				// 展示无税源地的提示
 				showCompanyModal: false,
+				// 选择税源地
 				showCompanyPop: false,
+				// 选中的客户关联的税源地列表
 				checkedClientCompanyList: [],
+				// 选择的税源地
 				checkedCompany: null,
+				// 展示日历
 				showCalendar: false
 			}
 		},
@@ -159,6 +180,7 @@
 		},
 		onShow() {
 			let self = this
+			// 将数据转换为可被使用的数据
 			self.issueClientList = self.clientList.map(client => {
 				return {
 					checked: self.issue.clientId === client._id,
@@ -168,6 +190,7 @@
 			})
 		},
 		onReady() {
+			// 设置校验
 			this.$refs.issueForm.setRules(this.rules);
 			if (this.isEdit) {
 				uni.setNavigationBarTitle({
@@ -177,6 +200,7 @@
 		},
 		computed: {
 			...mapGetters(['currentUser', 'issueList', 'clientList', 'channelList', 'companyList']),
+			// 客户关联的渠道名
 			clientChannelName() {
 				if (this.checkedClient) {
 					const channelInfo = this.channelList.find(channel => channel._id === this.checkedClient.channelId)
@@ -186,16 +210,20 @@
 				}
 				return '无/被删除'
 			},
+			// 选中的税源地名
 			checkedCompanyName() {
 				return this.checkedCompany ? this.checkedCompany.companyName : ''
 			},
+			// 税源地应得
 			serviceChargeAmount() {
 				const amount = this.issue.totalAmount * (this.issue.companyServiceCharge * 0.01)
 				return amount.toFixed(2)
 			},
+			// 渠道报价
 			channelQuotationPoint() {
 				return this.issue.channelQuotationPoint + '%'
 			},
+			// 渠道应得
 			channelAmount() {
 				if (this.checkedClient && this.checkedCompany) {
 					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.channelQuotationPoint *
@@ -205,9 +233,30 @@
 				}
 				return 0
 			},
+			// 个人应得
 			myAmount() {
 				if (this.checkedClient && this.checkedCompany) {
 					const amount = this.issue.totalAmount * (this.issue.channelQuotationPoint * 0.01 - this.issue.companyServiceCharge *
+							0.01) *
+						(1 - this.checkedCompany.tax * 0.01)
+					return amount.toFixed(2)
+				}
+				return 0
+			},
+			// 第一次返佣
+			firstRebateAmount() {
+				if (this.checkedClient && this.checkedCompany) {
+					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.companyServiceCharge *
+							0.01) *
+						(1 - this.checkedCompany.tax * 0.01)
+					return amount.toFixed(2)
+				}
+				return 0
+			},
+			// 第二次返佣
+			secondRebateAmount() {
+				if (this.checkedClient && this.checkedCompany) {
+					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.companyServiceCharge *
 							0.01) *
 						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
@@ -217,11 +266,13 @@
 		},
 		methods: {
 			...mapMutations(['ADDISSUE', 'UPDATEISSUE']),
+			// 确定添加新的客户
 			onClickConfirmClient() {
 				uni.navigateTo({
 					url: '../client/client_add'
 				})
 			},
+			// 弹出客户的列表
 			onClickClientList() {
 				if (this.clientList.length > 0) {
 					this.showClientPop = true
@@ -229,6 +280,7 @@
 					this.showClientModal = true
 				}
 			},
+			// 选择客户(客户id)
 			onChangeClient(id) {
 				this.issue.clientId = id
 				this.checkedClient = this.clientList.find(client => client._id === id)
@@ -239,6 +291,7 @@
 				this.checkedCompany = null
 				this.showClientPop = false
 			},
+			// 弹出税源地的列表
 			onClickCompanyList() {
 				if (this.checkedClientCompanyList.length > 0) {
 					this.showCompanyPop = true
@@ -246,18 +299,20 @@
 					this.showCompanyModal = true
 				}
 			},
+			// 选择税源地
 			onChangeCompany(id) {
 				this.issue.companyId = id
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
 				this.issue.channelQuotationPoint = this.checkedChannel.quotationPoint
 				this.issue.rebateInfoList = this.checkedCompany.rebateDateList.map(rebateDate => {
-					// type 0-当天 1-下周二 2-次月25号
+					// 转为具体的 年月日
 					let dateString = rebateDate.date
 					const type = rebateDate.type
 					const currentDate = new Date()
+					// type 0-当天 1-下周二 2-次月25号
 					if (type === 0) {
-						dateString = this.$util.timeFormat()
+						dateString = this.$util.timeFormat(currentDate.getTime())
 					}
 					if (type === 1) {
 						const currentDay = currentDate.getDay()
@@ -268,7 +323,7 @@
 						} else {
 							moreDay = 9 - currentDay
 						}
-						dateString = this.$util.timeFormat(currentDate.getTime() + moreDay*24*60*60*1000)
+						dateString = this.$util.timeFormat(currentDate.getTime() + moreDay * 24 * 60 * 60 * 1000)
 					}
 					if (type === 2) {
 						let year = currentDate.getFullYear()
@@ -285,7 +340,6 @@
 					const rebateInfo = {
 						date: dateString,
 						type: type,
-						scale: rebateDate.scale,
 						isFinish: false
 					}
 					if (dateStringArray.length === 3) {
@@ -297,6 +351,7 @@
 				})
 				this.showCompanyPop = false
 			},
+			// 选择/改变 税源地服务费
 			onChangeCompanyServiceCharge(value) {
 				if (value === this.checkedCompany.serviceCharge) {
 					this.issue.channelQuotationPoint = this.checkedChannel.quotationPoint
@@ -305,12 +360,17 @@
 					this.issue.channelQuotationPoint = this.checkedChannel.quotationPointSmall
 				}
 			},
+			// 提交
 			onClickSubmit() {
 				const self = this
 				self.issue.openid = self.currentUser.openid
 				self.issue.serviceChargeAmount = self.serviceChargeAmount
 				self.issue.channelAmount = self.channelAmount
 				self.issue.myAmount = self.myAmount
+				self.issue.rebateInfoList[0].amount = self.firstRebateAmount
+				if (self.issue.rebateInfoList.length === 2) {
+					self.issue.rebateInfoList[1].amount = self.secondRebateAmount
+				}
 				this.$refs.issueForm.validate(valid => {
 					if (valid) {
 						self.submiting = true

@@ -11,7 +11,7 @@
 		<text class="sub-title">渠道应得: {{ issue.channelAmount }}</text>
 		<text class="sub-title">个人应得: {{ issue.myAmount }}</text>
 		<block v-for="rebateInfo in issue.rebateInfoList" :key="rebateInfo.date">
-			<text class="sub-title">返佣时间: {{ rebateInfo.date}} 返佣比例: {{ rebateInfo.scale}}%</text>
+			<text class="sub-title">返佣时间: {{ rebateInfo.date}} 应返佣: {{ rebateInfo.amount}}</text>
 		</block>
 		<text class="sub-title">备注: {{ issue.mark.length > 0 ? issue.mark : '无' }}</text>
 		<u-button class="flag-button" @click="onClickFlagButton" :type="issue.isFinish ? 'warning' : 'primary'">{{ issue.isFinish ? '标记为未完成' : '标记为已完成' }}</u-button>
