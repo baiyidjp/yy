@@ -13,12 +13,12 @@
 			<u-form-item label="个税(%):" prop="tax">
 				<u-input type="digit" v-model="company.tax" placeholder="请输入税源地个税(0-100)" />
 			</u-form-item>
-			<u-form-item v-for="(rebate, index) in company.rebates" :key="index" label="返佣信息:">
+			<u-form-item v-for="(rebate, index) in company.rebateDateList" :key="index" label="返佣信息:">
 				<view class="rebate-wrap">
 					<u-input type="select" v-model="rebate.date" placeholder="请选择返佣时间" @click="onClickRebateDate(index)"/>
 					<u-input type="digit" style="width: 100px" v-model="rebate.scale" placeholder="返佣比例(%)(0-100)" />
-					<u-icon v-if="index < 2 & index === company.rebates.length-1" name="plus-circle" size="50" @click="onClickPlusIcon"></u-icon>
-					<u-icon v-if="index > 0 & index === company.rebates.length-1" :index=index name="minus-circle" size="50" @click="onClickMinusIcon"></u-icon>
+					<u-icon v-if="index < rebateDateList.length-1 & index === company.rebateDateList.length-1" name="plus-circle" size="50" @click="onClickPlusIcon"></u-icon>
+					<u-icon v-if="index > 0 & index === company.rebateDateList.length-1" :index=index name="minus-circle" size="50" @click="onClickMinusIcon"></u-icon>
 				</view>
 			</u-form-item>
 			<u-form-item label="备注:">
@@ -33,8 +33,8 @@
 					请选择返佣时间(单选)
 				</view>
 				<u-radio-group v-model="currentRebateType">
-					<u-radio v-for="(date, index) in rebateDates" :key="index" :name="index" @change="onChangeRebateDate">
-						{{date.date}}
+					<u-radio v-for="(rebateDate, index) in rebateDateList" :key="index" :name="index" @change="onChangeRebateDate">
+						{{rebateDate.date}}
 					</u-radio>
 				</u-radio-group>
 			</view>
@@ -55,10 +55,7 @@
 					serviceCharge: '',
 					serviceChargeSmall: '',
 					tax: '1.5',
-					rebates: [{
-						date: null,
-						scale: null
-					}],
+					rebateDateList: [],
 					mark: '',
 					openid: '',
 					createAt: null,
@@ -117,20 +114,6 @@
 						trigger: ['change', 'blur']
 					}],
 				},
-				rebateDates: [
-					{
-						type: 0,
-						date: '当天'
-					},
-					{
-						type: 1,
-						date: '下周二'
-					},
-					{
-						type: 2,
-						date: '次月25号'
-					},
-				],
 				currentRebateIndex: 0,
 				showRebatePop: false,
 				currentRebateType: -1,
@@ -141,6 +124,14 @@
 			if (option.company) {
 				this.company = JSON.parse(option.company)
 				this.isEdit = true
+			} else {
+				const rebateDate = this.rebateDateList[0]
+				this.company.rebateDateList = [{
+					_id: rebateDate._id,
+					type: rebateDate.type,
+					date: rebateDate.date,
+					scale: rebateDate.scale
+				}]
 			}
 		},
 		onReady() {
@@ -152,18 +143,18 @@
 			}
 		},
 		computed: {
-			...mapGetters(['currentUser', 'companyList'])
+			...mapGetters(['currentUser', 'companyList', 'rebateDateList'])
 		},
 		methods: {
 			...mapMutations(['ADDCOMPANY', 'UPDATECOMPANY']),
 			onClickPlusIcon() {
-				this.company.rebates.splice(this.company.rebates.length, 0 , {
+				this.company.rebateDateList.splice(this.company.rebateDateList.length, 0 , {
 					date: null,
 					amount: null
 				})
 			},
 			onClickMinusIcon(index) {
-				this.company.rebates.splice(index, 1)
+				this.company.rebateDateList.splice(index, 1)
 			},
 			onClickRebateDate(index) {
 				this.currentRebateIndex = index
@@ -171,8 +162,13 @@
 				this.currentRebateType = -1
 			},
 			onChangeRebateDate(index) {
-				const rebateDate = this.rebateDates[index].date
-				this.company.rebates[this.currentRebateIndex].date = rebateDate
+				const rebateDate = this.rebateDateList[index]
+				this.company.rebateDateList[this.currentRebateIndex] = {
+					_id: rebateDate._id,
+					type: rebateDate.type,
+					date: rebateDate.date,
+					scale: rebateDate.scale
+				}
 				this.showRebatePop = false
 			},
 			onClickSubmit() {

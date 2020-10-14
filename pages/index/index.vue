@@ -32,7 +32,7 @@
 			this.checkAccess()
 		},
 		methods: {
-			...mapMutations(['UPDATECURRENTUSER', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST', 'UPDATEISSUELIST']),
+			...mapMutations(['UPDATECURRENTUSER', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST', 'UPDATEISSUELIST', 'UPDATEREBATEDATELIST']),
 			checkAccess() {
 				const self = this
 				self.user = null;
@@ -71,6 +71,9 @@
 									})
 									self.UPDATEISSUELIST({
 										issueList: result.issueList.data
+									})
+									self.UPDATEREBATEDATELIST({
+										rebateDateList: result.rebateDateList.data
 									})
 									// 有权限使用小程序 跳转首页
 									uni.switchTab({

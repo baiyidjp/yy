@@ -13,7 +13,7 @@
 					<text class="sub-title">大额服务费比例: {{ company.serviceCharge }}%</text>
 					<text class="sub-title">小额服务费比例: {{ company.serviceChargeSmall }}%</text>
 					<text class="sub-title">个税比例: {{ company.tax }}%</text>
-					<text class="sub-title" v-for="rebate in company.rebates" :key="rebate.date">返佣时间: {{ rebate.date }}  返佣比例: {{ rebate.scale}}%</text>
+					<text class="sub-title" v-for="rebate in company.rebateDateList" :key="rebate.date">返佣时间: {{ rebate.date }}  返佣比例: {{ rebate.scale}}%</text>
 					<text class="sub-title">备注: {{ company.mark.length > 0 ? company.mark : '无' }}</text>
 				</view>
 			</block>

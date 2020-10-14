@@ -7,11 +7,11 @@
 		<text class="sub-title">渠道: {{ checkedChannel.channelName }}</text>
 		<text class="sub-title">税源地: {{ checkedCompany.companyName }}</text>
 		<text class="sub-title">众包费: {{ issue.totalAmount }}</text>
-		<text class="sub-title">税源地应得: {{ serviceChargeAmount }}</text>
-		<text class="sub-title">渠道应得: {{ channelAmount }}</text>
-		<text class="sub-title">个人应得: {{ myAmount }}</text>
-		<block v-for="rebate in checkedCompany.rebates" :key="rebate.date">
-			<text class="sub-title">返佣时间: {{ rebate.date}} 返佣比例: {{ rebate.scale}}%</text>
+		<text class="sub-title">税源地应得: {{ issue.serviceChargeAmount }}</text>
+		<text class="sub-title">渠道应得: {{ issue.channelAmount }}</text>
+		<text class="sub-title">个人应得: {{ issue.myAmount }}</text>
+		<block v-for="rebateInfo in issue.rebateInfoList" :key="rebateInfo.date">
+			<text class="sub-title">返佣时间: {{ rebateInfo.date}} 返佣比例: {{ rebateInfo.scale}}%</text>
 		</block>
 		<text class="sub-title">备注: {{ issue.mark.length > 0 ? issue.mark : '无' }}</text>
 		<u-button class="flag-button" @click="onClickFlagButton" :type="issue.isFinish ? 'warning' : 'primary'">{{ issue.isFinish ? '标记为未完成' : '标记为已完成' }}</u-button>
@@ -52,31 +52,6 @@
 				if (this.issue) {
 					return	this.channelList.find(channle => channle._id === this.checkedClient.channelId)
 				}
-			},
-			serviceChargeAmount() {
-				if (this.issue) {
-					const amount = this.issue.totalAmount * (this.issue.companyServiceCharge * 0.01)
-					return amount.toFixed(2)
-				}
-				return 0
-			},
-			channelAmount() {
-				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.channelQuotationPoint *
-							0.01) *
-						(1 - this.checkedCompany.tax * 0.01)
-					return amount.toFixed(2)
-				}
-				return 0
-			},
-			myAmount() {
-				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.issue.channelQuotationPoint * 0.01 - this.issue.companyServiceCharge *
-							0.01) *
-						(1 - this.checkedCompany.tax * 0.01)
-					return amount.toFixed(2)
-				}
-				return 0
 			}
 		},
 		methods: {

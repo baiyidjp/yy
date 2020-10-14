@@ -19,11 +19,14 @@ exports.main = async (event, context) => {
 		openid: event.openid
 	}).orderBy('createAt', 'desc').get()
 	
+	let rebateDateList = await db.collection('rebate_date').get()
+	
 	//返回数据给客户端
 	return {
 		companyList,
 		clientList,
 		channelList,
-		issueList
+		issueList,
+		rebateDateList
 	}
 };

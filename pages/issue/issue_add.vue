@@ -31,8 +31,8 @@
 			<u-form-item v-if="checkedCompany" label="个人应得:">
 				<u-input :value="myAmount" type="number" :disabled="true" placeholder="个人所得" />
 			</u-form-item>
-			<u-form-item v-if="checkedCompany" label="返佣时间:" v-for="rebate in checkedCompany.rebates" :key="rebate.date">
-				<text>{{ rebate.date }} 返佣比例: {{ rebate.scale}}</text>
+			<u-form-item v-if="checkedCompany" label="返佣时间:" v-for="rebateInfo in issue.rebateInfoList" :key="rebateInfo.date">
+				<text>{{ rebateInfo.date }} 返佣比例: {{ rebateInfo.scale}}</text>
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="issue.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
@@ -84,6 +84,10 @@
 					totalAmount: 0,
 					companyServiceCharge: 0,
 					channelQuotationPoint: 0,
+					serviceChargeAmount: 0,
+					channelAmount: 0,
+					myAmount: 0,
+					rebateInfoList: [],
 					isFinish: false,
 					mark: '',
 					openid: '',
@@ -247,6 +251,50 @@
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
 				this.issue.channelQuotationPoint = this.checkedChannel.quotationPoint
+				this.issue.rebateInfoList = this.checkedCompany.rebateDateList.map(rebateDate => {
+					// type 0-当天 1-下周二 2-次月25号
+					let dateString = rebateDate.date
+					const type = rebateDate.type
+					const currentDate = new Date()
+					if (type === 0) {
+						dateString = this.$util.timeFormat()
+					}
+					if (type === 1) {
+						const currentDay = currentDate.getDay()
+						let moreDay = 0
+						// 算出多加几天的时间 周末是0 直接加2天
+						if (currentDay === 0) {
+							moreDay = 2
+						} else {
+							moreDay = 9 - currentDay
+						}
+						dateString = this.$util.timeFormat(currentDate.getTime() + moreDay*24*60*60*1000)
+					}
+					if (type === 2) {
+						let year = currentDate.getFullYear()
+						let month = currentDate.getMonth() + 1
+						if (month > 11) {
+							month = 0
+							year += 1
+						}
+						// 设置下一个月25号的日期
+						currentDate.setFullYear(year, month, 25)
+						dateString = this.$util.timeFormat(currentDate.getTime())
+					}
+					const dateStringArray = dateString.split('-')
+					const rebateInfo = {
+						date: dateString,
+						type: type,
+						scale: rebateDate.scale,
+						isFinish: false
+					}
+					if (dateStringArray.length === 3) {
+						rebateInfo['year'] = dateStringArray[0]
+						rebateInfo['month'] = dateStringArray[1]
+						rebateInfo['day'] = dateStringArray[2]
+					}
+					return rebateInfo
+				})
 				this.showCompanyPop = false
 			},
 			onChangeCompanyServiceCharge(value) {
@@ -260,6 +308,9 @@
 			onClickSubmit() {
 				const self = this
 				self.issue.openid = self.currentUser.openid
+				self.issue.serviceChargeAmount = self.serviceChargeAmount
+				self.issue.channelAmount = self.channelAmount
+				self.issue.myAmount = self.myAmount
 				this.$refs.issueForm.validate(valid => {
 					if (valid) {
 						self.submiting = true

@@ -4,8 +4,8 @@
 			<u-form-item label="客户名称:" prop="clientName">
 				<u-input v-model="client.clientName" placeholder="请输入客户名称" />
 			</u-form-item>
-			<u-form-item label="服务费费率(%):" prop="signupPoint">
-				<u-input type="digit" v-model="client.signupPoint" placeholder="请输入服务费费率(0-100)" />
+			<u-form-item label="签约点位(%):" prop="signupPoint">
+				<u-input type="digit" v-model="client.signupPoint" placeholder="请输入签约点位(0-100)" />
 			</u-form-item>
 			<u-form-item label="税源地:" prop="companyIds">
 				<u-input :value="clientCompanyNames" type="select" placeholder="请选择税源地(可多选)" @click="onClickCompanyList" />

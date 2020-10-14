@@ -9,7 +9,8 @@ const store = new Vuex.Store({
 		companyList: null,
 		clientList: null,
 		channelList: null,
-		issueList: null
+		issueList: null,
+		rebateDateList: null
 	},
 	getters: {
 		currentUser: state => {
@@ -26,6 +27,9 @@ const store = new Vuex.Store({
 		},
 		issueList: state => {
 			return state.issueList
+		},
+		rebateDateList: state => {
+			return state.rebateDateList
 		}
 	},
 	mutations: {
@@ -91,7 +95,11 @@ const store = new Vuex.Store({
 		DELETEISSUE (state, payload) {
 			const index = state.issueList.findIndex(issue => issue._id === payload.issue._id)
 			state.issueList.splice(index, 1)
-		}
+		},
+		// rebate date
+		UPDATEREBATEDATELIST (state, payload) {
+			state.rebateDateList = payload.rebateDateList
+		},
 	},
 	actions: {
 	}
