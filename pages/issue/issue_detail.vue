@@ -2,7 +2,7 @@
 	<view class="issue-item">
 		<view class="top-wrap">
 			<text class="title">{{ checkedClient.clientName }}</text>
-			<u-tag :text="issue.isFinish ? '已完成' : '未完成'" :type="issue.isFinish ? 'primary' : 'warning'"></u-tag>
+			<u-tag :text="issueFinish ? '已完成' : '未完成'" :type="issueFinish ? 'primary' : 'warning'"></u-tag>
 		</view>
 		<text class="sub-title">渠道: {{ checkedChannel.channelName }}</text>
 		<text class="sub-title">税源地: {{ checkedCompany.companyName }}</text>
@@ -10,11 +10,14 @@
 		<text class="sub-title">税源地应得: {{ issue.serviceChargeAmount }}</text>
 		<text class="sub-title">渠道应得: {{ issue.channelAmount }}</text>
 		<text class="sub-title">个人应得: {{ issue.myAmount }}</text>
-		<block v-for="rebateInfo in issue.rebateInfoList" :key="rebateInfo.date">
-			<text class="sub-title">返佣时间: {{ rebateInfo.date}} 应返佣: {{ rebateInfo.amount}}</text>
-		</block>
+		<view class="rebate-wrap" v-for="rebateInfo in issue.rebateInfoList" :key="rebateInfo.date">
+			<view class="rebate-wrap-info">
+				<text class="sub-title">返佣时间: {{ rebateInfo.date}}</text>
+				<text class="sub-title">应返佣金: {{ rebateInfo.amount}}</text>
+			</view>
+			<u-button class="flag-button" @click="onClickFlagButton(rebateInfo)" :type="rebateInfo.isFinish ? 'warning' : 'primary'">{{ rebateInfo.isFinish ? '标记为未完成' : '标记为已完成' }}</u-button>
+		</view>
 		<text class="sub-title">备注: {{ issue.mark.length > 0 ? issue.mark : '无' }}</text>
-		<u-button class="flag-button" @click="onClickFlagButton" :type="issue.isFinish ? 'warning' : 'primary'">{{ issue.isFinish ? '标记为未完成' : '标记为已完成' }}</u-button>
 	</view>
 </template>
 
@@ -25,18 +28,27 @@
 	export default {
 		data() {
 			return {
-				issueId: ''
+				issue: null
 			}
 		},
 		onLoad(option) {
 			if (option._id) {
-				this.issueId = option._id
+				this.issue = this.issueList.find(issue => issue._id === option._id)
 			}
 		},
 		computed: {
 			...mapGetters(['issueList', 'clientList', 'channelList', 'companyList']),
-			issue() {
-				return this.issueList.find(issue => issue._id === this.issueId)
+			issueFinish() {
+				if (this.issue) {
+					let isFinish = true
+					this.issue.rebateInfoList.forEach(rebateInfo => {
+						if (!rebateInfo.isFinish) {
+							isFinish = false
+						}
+					})
+					return isFinish
+				}
+				return false
 			},
 			checkedClient() {
 				if (this.issue) {
@@ -55,9 +67,9 @@
 			}
 		},
 		methods: {
-			onClickFlagButton() {
+			onClickFlagButton(rebateInfo) {
 				const self = this
-				self.issue.isFinish = !self.issue.isFinish
+				rebateInfo.isFinish = !rebateInfo.isFinish
 				self.issue.updateAt = Date.now()
 				self.issue.updateBy = self.issue.openid
 				uniCloud.callFunction({
@@ -111,7 +123,21 @@
 		color: $u-content-color;
 	}
 	
-	.flag-button {
-		margin-top: 20px;
+	.rebate-wrap {
+		margin-top: 5px;
+		border-top: 1px solid $u-border-color;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
+	.rebate-wrap:last-of-type {
+		border-bottom: 1px solid $u-border-color;
+		padding-bottom: 5px;
+	}
+	
+	.rebate-wrap-info {
+		display: flex;
+		flex-direction: column;
+	}
+	
 </style>

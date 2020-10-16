@@ -26,9 +26,8 @@ exports.main = async (event, context) => {
 		const channel = event.channel
 		const result = await db.collection('channel_list').doc(channel._id).update({
 			channelName: channel.channelName,
-			quotationPoint: channel.quotationPoint,
-			quotationPointSmall: channel.quotationPointSmall,
 			channelCompany: channel.channelCompany,
+			channelCompanyInfoList: channel.channelCompanyInfoList,
 			mark: channel.mark,
 			createAt: channel.createAt,
 			createBy: channel.createBy,

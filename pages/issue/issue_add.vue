@@ -32,7 +32,7 @@
 				<u-input :value="myAmount" type="number" :disabled="true" placeholder="个人所得" />
 			</u-form-item>
 			<u-form-item v-if="checkedCompany" label="返佣时间:" v-for="(rebateInfo, index) in issue.rebateInfoList" :key="rebateInfo.date">
-				<text>{{ rebateInfo.date }} 应返佣: {{ index === 0 ? firstRebateAmount : secondRebateAmount}}</text>
+				<text>{{ rebateInfo.date }} 应返佣金: {{ index === 0 ? firstRebateAmount : secondRebateAmount}}</text>
 			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="issue.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
@@ -97,8 +97,6 @@
 					myAmount: 0,
 					// 返佣信息 
 					rebateInfoList: [],
-					// 工单是否完成 
-					isFinish: false,
 					mark: '',
 					openid: '',
 					createAt: null,
@@ -160,6 +158,8 @@
 				checkedClient: null,
 				// 选中的渠道
 				checkedChannel: null,
+				// 选择的渠道的报价信息
+				checkedChannelQuotationInfo: null,
 				// 展示无税源地的提示
 				showCompanyModal: false,
 				// 选择税源地
@@ -245,8 +245,8 @@
 			},
 			// 第一次返佣
 			firstRebateAmount() {
-				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.companyServiceCharge *
+				if (this.checkedClient && this.checkedCompany && this.issue.rebateInfoList.length > 0) {
+					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.rebateInfoList[0].scale *
 							0.01) *
 						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
@@ -255,9 +255,9 @@
 			},
 			// 第二次返佣
 			secondRebateAmount() {
-				if (this.checkedClient && this.checkedCompany) {
-					const amount = this.issue.totalAmount * (this.checkedClient.signupPoint * 0.01 - this.issue.companyServiceCharge *
-							0.01) *
+				if (this.checkedClient && this.checkedCompany && this.issue.rebateInfoList.length > 1) {
+					const amount = this.issue.totalAmount * (this.issue.rebateInfoList[0].scale *
+							0.01 - this.issue.companyServiceCharge * 0.01) *
 						(1 - this.checkedCompany.tax * 0.01)
 					return amount.toFixed(2)
 				}
@@ -304,7 +304,8 @@
 				this.issue.companyId = id
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
-				this.issue.channelQuotationPoint = this.checkedChannel.quotationPoint
+				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId === id)
+				this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
 				this.issue.rebateInfoList = this.checkedCompany.rebateDateList.map(rebateDate => {
 					// 转为具体的 年月日
 					let dateString = rebateDate.date
@@ -340,6 +341,7 @@
 					const rebateInfo = {
 						date: dateString,
 						type: type,
+						scale: rebateDate.scale,
 						isFinish: false
 					}
 					if (dateStringArray.length === 3) {
@@ -354,10 +356,10 @@
 			// 选择/改变 税源地服务费
 			onChangeCompanyServiceCharge(value) {
 				if (value === this.checkedCompany.serviceCharge) {
-					this.issue.channelQuotationPoint = this.checkedChannel.quotationPoint
+					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
 				}
 				if (value === this.checkedCompany.serviceChargeSmall) {
-					this.issue.channelQuotationPoint = this.checkedChannel.quotationPointSmall
+					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPointSmall
 				}
 			},
 			// 提交

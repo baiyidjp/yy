@@ -13,14 +13,14 @@
 			<u-form-item label="个税(%):" prop="tax">
 				<u-input type="digit" v-model="company.tax" placeholder="请输入税源地个税(0-100)" />
 			</u-form-item>
-			<u-form-item v-for="(rebate, index) in company.rebateDateList" :key="index" label="返佣时间:">
-				<view class="rebate-wrap">
-					<u-input type="select" v-model="rebate.date" placeholder="请选择返佣时间" @click="onClickRebateDate(index)" />
-					<u-input type="digit" style="width: 100px" v-model="rebate.scale" placeholder="返佣比例(%)(0-100)" />
-					<u-icon v-if="index === 0 && company.rebateDateList.length === 1" name="plus-circle" size="50" @click="onClickPlusIcon"></u-icon>
-					<u-icon v-if="index === 1" name="minus-circle" size="50" @click="onClickMinusIcon"></u-icon>
-				</view>
+			<u-form-item v-for="(rebate, index) in company.rebateDateList" :key="index" label="返佣信息:">
+				<u-input type="select" v-model="rebate.date" placeholder="请选择返佣时间" @click="onClickRebateDate(index)" />
+				<u-input type="digit" style="width: 100px" v-model="rebate.scale" placeholder="返佣比例(%)(0-100)" />
 			</u-form-item>
+			<view class="u-flex" style="justify-content: space-between;padding: 5px;">
+				<u-button :disabled="minusButtonDisabled" @click="onClickMinusIcon">减少返佣信息</u-button>
+				<u-button :disabled="plusButtonDisabled" type="primary" @click="onClickPlusIcon">增加返佣信息</u-button>
+			</view>
 			<u-form-item label="备注:">
 				<u-input v-model="company.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
 			</u-form-item>
@@ -128,7 +128,7 @@
 					_id: rebateDate._id,
 					type: rebateDate.type,
 					date: rebateDate.date,
-					scale: rebateDate.scale
+					scale: ''
 				}]
 			}
 		},
@@ -141,7 +141,13 @@
 			}
 		},
 		computed: {
-			...mapGetters(['currentUser', 'companyList', 'rebateDateList'])
+			...mapGetters(['currentUser', 'companyList', 'rebateDateList']),
+			minusButtonDisabled() {
+				return this.company.rebateDateList.length < 2
+			},
+			plusButtonDisabled() {
+				return this.company.rebateDateList.length >= 2
+			}
 		},
 		methods: {
 			...mapMutations(['ADDCOMPANY', 'UPDATECOMPANY']),
@@ -166,13 +172,20 @@
 						_id: rebateDate._id,
 						type: rebateDate.type,
 						date: rebateDate.date,
-						scale: rebateDate.scale
+						scale: ''
 					}
 				}
 				this.showRebatePop = false
 			},
 			onClickSubmit() {
 				const self = this
+				if (self.company.rebateDateList[0].scale <= 0) {
+					this.$refs.uToast.show({
+						title: '请输入返佣信息',
+						type: 'error'
+					})
+					return
+				}
 				self.company.openid = self.currentUser.openid
 				this.$refs.companyForm.validate(valid => {
 					if (valid) {
@@ -238,15 +251,6 @@
 		padding: 20px 20px 34px;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.rebate-wrap {
-		display: flex;
-		align-items: center;
-	}
-
-	.rebate-wrap u-input {
-		margin-right: 5px;
 	}
 
 	.show-pop {

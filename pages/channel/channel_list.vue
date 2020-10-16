@@ -10,9 +10,12 @@
 							<u-tag text="编辑" @click="onClickEdit(channel)"></u-tag>
 						</view>
 					</view>
-					<text class="sub-title">报价点位大额: {{ channel.quotationPoint }}%</text>
-					<text class="sub-title">报价点位小额: {{ channel.quotationPointSmall }}%</text>
 					<text class="sub-title">所属公司: {{ channel.channelCompany }}</text>
+					<view class="quotation-wrap" v-for="(companyInfo, index) in channel.channelCompanyInfoList" :key="index">
+						<text class="sub-title">税源地: {{ companyInfo.companyName }}</text>
+						<text class="sub-title">报价点位大额: {{ companyInfo.quotationPoint }}%</text>
+						<text class="sub-title">报价点位小额: {{ companyInfo.quotationPointSmall }}%</text>
+					</view>
 					<text class="sub-title">备注: {{ channel.mark.length > 0 ? channel.mark : '无' }}</text>
 				</view>
 			</block>
@@ -61,8 +64,20 @@
 				uni.stopPullDownRefresh()
 			})
 		},
+		onShow() {
+			const self = this
+			this.channelList.map(channel => {
+				channel.channelCompanyInfoList.map(companyInfo => {
+					const company = self.companyList.find(company => company._id === companyInfo.companyId)
+					if (company) {
+						companyInfo.companyName = company.companyName
+					}
+					return companyInfo
+				})
+			})
+		},
 		computed: {
-			...mapGetters(['currentUser', 'channelList'])
+			...mapGetters(['currentUser', 'channelList', 'companyList'])
 		},
 		methods: {
 			...mapMutations(['DELETECHANNEL', 'UPDATECHANNELLIST']),
@@ -183,4 +198,16 @@
 		font-size: 14px;
 		color: $u-content-color;
 	}
+
+	.quotation-wrap {
+		margin-top: 5px;
+		border-top: 1px solid $u-border-color;
+		display: flex;
+		flex-direction: column;
+	}
+	.quotation-wrap:last-of-type {
+		border-bottom: 1px solid $u-border-color;
+		padding-bottom: 5px;
+	}
+	
 </style>
