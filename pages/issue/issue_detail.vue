@@ -10,7 +10,7 @@
 		<text class="sub-title">税源地应得: {{ issue.serviceChargeAmount }}</text>
 		<text class="sub-title">渠道应得: {{ issue.channelAmount }}</text>
 		<text class="sub-title">个人应得: {{ issue.myAmount }}</text>
-		<view class="rebate-wrap" v-for="rebateInfo in issue.rebateInfoList" :key="rebateInfo.date">
+		<view class="rebate-wrap" v-for="(rebateInfo, index) in issue.rebateInfoList" :key="index">
 			<view class="rebate-wrap-info">
 				<text class="sub-title">返佣时间: {{ rebateInfo.date}}</text>
 				<text class="sub-title">应返佣金: {{ rebateInfo.amount}}</text>

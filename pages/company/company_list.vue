@@ -13,7 +13,16 @@
 					<text class="sub-title">大额服务费比例: {{ company.serviceCharge }}%</text>
 					<text class="sub-title">小额服务费比例: {{ company.serviceChargeSmall }}%</text>
 					<text class="sub-title">个税比例: {{ company.tax }}%</text>
-					<text class="sub-title" v-for="rebate in company.rebateDateList" :key="rebate.date">返佣时间: {{ rebate.date }}  返佣比例: {{ rebate.scale}}%</text>
+					<view class="rebate-wrap">
+						<view class="rebate-wrap-info">
+							<text class="sub-title" v-for="rebate in company.rebateInfoList" :key="rebate.date">大额返佣时间: {{ rebate.date }}  返佣比例: {{ rebate.scale}}%</text>
+						</view>
+					</view>
+					<view class="rebate-wrap">
+						<view class="rebate-wrap-info">
+							<text class="sub-title" v-for="rebate in company.rebateInfoListSmall" :key="rebate.date">小额返佣时间: {{ rebate.date }}  返佣比例: {{ rebate.scale}}%</text>
+						</view>
+					</view>
 					<text class="sub-title">备注: {{ company.mark.length > 0 ? company.mark : '无' }}</text>
 				</view>
 			</block>
@@ -183,5 +192,22 @@
 		margin-top: 5px;
 		font-size: 14px;
 		color: $u-content-color;
+	}
+	
+	.rebate-wrap {
+		margin-top: 5px;
+		border-top: 1px solid $u-border-color;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.rebate-wrap:last-of-type {
+		border-bottom: 1px solid $u-border-color;
+		padding-bottom: 5px;
+	}
+	
+	.rebate-wrap-info {
+		display: flex;
+		flex-direction: column;
 	}
 </style>

@@ -19,7 +19,7 @@ exports.main = async (event, context) => {
 		openid: event.openid
 	}).orderBy('createAt', 'desc').get()
 	
-	let rebateDateList = await db.collection('rebate_date').get()
+	let rebateInfoList = await db.collection('rebate_date').get()
 	
 	//返回数据给客户端
 	return {
@@ -27,6 +27,6 @@ exports.main = async (event, context) => {
 		clientList,
 		channelList,
 		issueList,
-		rebateDateList
+		rebateInfoList
 	}
 };

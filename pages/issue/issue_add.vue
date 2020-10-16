@@ -304,9 +304,25 @@
 				this.issue.companyId = id
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
-				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId === id)
+				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId ===
+					id)
 				this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
-				this.issue.rebateInfoList = this.checkedCompany.rebateDateList.map(rebateDate => {
+				this.handleRebateInfoList()
+				this.showCompanyPop = false
+			},
+			// 选择/改变 税源地服务费
+			onChangeCompanyServiceCharge(value) {
+				if (value === this.checkedCompany.serviceCharge) {
+					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
+					this.handleRebateInfoList()
+				}
+				if (value === this.checkedCompany.serviceChargeSmall) {
+					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPointSmall
+					this.handleRebateInfoListSmall()
+				}
+			},
+			handleRebateInfoList() {
+				this.issue.rebateInfoList = this.checkedCompany.rebateInfoList.map(rebateDate => {
 					// 转为具体的 年月日
 					let dateString = rebateDate.date
 					const type = rebateDate.type
@@ -351,16 +367,53 @@
 					}
 					return rebateInfo
 				})
-				this.showCompanyPop = false
 			},
-			// 选择/改变 税源地服务费
-			onChangeCompanyServiceCharge(value) {
-				if (value === this.checkedCompany.serviceCharge) {
-					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
-				}
-				if (value === this.checkedCompany.serviceChargeSmall) {
-					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPointSmall
-				}
+			handleRebateInfoListSmall() {
+				this.issue.rebateInfoList = this.checkedCompany.rebateInfoListSmall.map(rebateDate => {
+					// 转为具体的 年月日
+					let dateString = rebateDate.date
+					const type = rebateDate.type
+					const currentDate = new Date()
+					// type 0-当天 1-下周二 2-次月25号
+					if (type === 0) {
+						dateString = this.$util.timeFormat(currentDate.getTime())
+					}
+					if (type === 1) {
+						const currentDay = currentDate.getDay()
+						let moreDay = 0
+						// 算出多加几天的时间 周末是0 直接加2天
+						if (currentDay === 0) {
+							moreDay = 2
+						} else {
+							moreDay = 9 - currentDay
+						}
+						dateString = this.$util.timeFormat(currentDate.getTime() + moreDay * 24 * 60 * 60 * 1000)
+					}
+					if (type === 2) {
+						let year = currentDate.getFullYear()
+						let month = currentDate.getMonth() + 1
+						if (month > 11) {
+							month = 0
+							year += 1
+						}
+						// 设置下一个月25号的日期
+						currentDate.setFullYear(year, month, 25)
+						dateString = this.$util.timeFormat(currentDate.getTime())
+					}
+					const dateStringArray = dateString.split('-')
+					const rebateInfo = {
+						date: dateString,
+						type: type,
+						scale: rebateDate.scale,
+						isFinish: false
+					}
+					if (dateStringArray.length === 3) {
+						rebateInfo['year'] = dateStringArray[0]
+						rebateInfo['month'] = dateStringArray[1]
+						rebateInfo['day'] = dateStringArray[2]
+					}
+					return rebateInfo
+				})
 			},
 			// 提交
 			onClickSubmit() {
