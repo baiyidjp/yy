@@ -131,12 +131,12 @@
 
 <style lang="scss" scoped>
 	.wrap {
-		height: 100vh;
 		display: flex;
 		flex-direction: column;
 	}
 
 	.no-data-wrap {
+		height: 100vh;
 		justify-content: center;
 		align-items: center;
 	}
