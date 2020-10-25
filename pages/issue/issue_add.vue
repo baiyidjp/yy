@@ -48,7 +48,7 @@
 				</view>
 				<u-radio-group v-model="checkedClient._id" :wrap="true">
 					<u-radio v-for="(client, index) in issueClientList" :key="index" :name="client._id" @change="onChangeClient">
-						{{client.clientName}}
+						{{client.clientName}} (签约价格: {{client.signupPoint}}%)
 					</u-radio>
 				</u-radio-group>
 			</view>
@@ -61,7 +61,7 @@
 				</view>
 				<u-radio-group v-model="checkedCompany._id" :wrap="true">
 					<u-radio v-for="(company, index) in checkedClientCompanyList" :key="index" :name="company._id" @change="onChangeCompany">
-						{{company.companyName}}
+						{{company.companyName}} ({{company.serviceCharge}}% | {{company.serviceChargeSmall}}%)
 					</u-radio>
 				</u-radio-group>
 			</view>
@@ -185,7 +185,8 @@
 				return {
 					checked: self.issue.clientId === client._id,
 					_id: client._id,
-					clientName: client.clientName
+					clientName: client.clientName,
+					signupPoint: client.signupPoint
 				}
 			})
 		},

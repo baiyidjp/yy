@@ -37,7 +37,7 @@
 				</view>
 				<u-checkbox-group :wrap="true" shape="circle" @change="onChangeCompany">
 					<u-checkbox v-model="company.checked" v-for="(company, index) in clientCompanyList" :key="index" :name="company._id">
-						{{ company.companyName }}
+						{{company.companyName}} ({{company.serviceCharge}}% | {{company.serviceChargeSmall}}%)
 					</u-checkbox>
 				</u-checkbox-group>
 			</view>
@@ -226,7 +226,9 @@
 				return {
 					checked: self.client.companyIds.includes(company._id),
 					_id: company._id,
-					companyName: company.companyName
+					companyName: company.companyName,
+					serviceCharge: company.serviceCharge,
+					serviceChargeSmall: company.serviceChargeSmall
 				}
 			})
 		},
