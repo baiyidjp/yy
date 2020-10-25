@@ -6,15 +6,18 @@ exports.main = async (event, context) => {
 		return false
 	}
 	
-	const openidUrl = `https://api.weixin.qq.com/sns/jscode2session?appid=wx39bdc15715f29e38&secret=92adab0b74194c5b55f6847c909381c6&js_code=${code}&grant_type=authorization_code`
+	const db = uniCloud.database()
 	
+	let appInfos = await db.collection('app_info').get()
+	const appInfo = appInfos.data[0]
+	
+	const openidUrl = `https://api.weixin.qq.com/sns/jscode2session?appid=${appInfo.appid}&secret=${appInfo.secret}&js_code=${code}&grant_type=authorization_code`
+
 	const openidResult = await uniCloud.httpclient.request(openidUrl, {
 		method:'GET',
 		dataType: 'json'
 	})
 	const openid = openidResult.data.openid
-	
-	const db = uniCloud.database()
 	
 	let users = await db.collection('user_list').where({
 		openid: openid

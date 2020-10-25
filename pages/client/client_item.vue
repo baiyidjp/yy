@@ -7,6 +7,7 @@
 		<text class="sub-title">签约点位: {{ client.signupPoint }}%</text>
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
 		<text class="sub-title">渠道: {{ clientChannelName }}</text>
+		<text class="sub-title">签约时间: {{ client.signupTime}}</text>
 		<text class="sub-title">备注: {{ client.mark.length > 0 ? client.mark : '无' }}</text>
 	</view>
 </template>
