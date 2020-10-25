@@ -61,18 +61,18 @@
 		}, {
 			"path": "pages/issue/issue_list",
 			"style": {
-				"navigationBarTitleText": "工单列表",
+				"navigationBarTitleText": "业务单列表",
 				"enablePullDownRefresh": true
 			}
 		}, {
 			"path": "pages/issue/issue_add",
 			"style": {
-				"navigationBarTitleText": "创建工单"
+				"navigationBarTitleText": "创建业务单"
 			}
 		},  {
 			"path": "pages/issue/issue_detail",
 			"style": {
-				"navigationBarTitleText": "工单详情"
+				"navigationBarTitleText": "业务单详情"
 			}
 		}, {
 			"path": "pages/user/user_list",
@@ -96,7 +96,7 @@
 				"pagePath": "pages/issue/issue_list",
 				"iconPath": "static/tabbar/issue.png",
 				"selectedIconPath": "static/tabbar/issue_active.png",
-				"text": "工单"
+				"text": "业务单"
 			}, {
 				"pagePath": "pages/client/client_list",
 				"iconPath": "static/tabbar/client.png",

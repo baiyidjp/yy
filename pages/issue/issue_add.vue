@@ -1,7 +1,7 @@
 <template>
 	<view class="wrap">
 		<u-form class="form-wrap" :model="issue" ref="issueForm" label-width="auto">
-			<u-form-item label="工单客户:" prop="clientId">
+			<u-form-item label="业务单单客户:" prop="clientId">
 				<u-input type="select" :value="checkedClient.clientName" placeholder="请选择客户" @click="onClickClientList" />
 			</u-form-item>
 			<u-form-item v-if="checkedClient" label="渠道:">
@@ -194,7 +194,7 @@
 			this.$refs.issueForm.setRules(this.rules);
 			if (this.isEdit) {
 				uni.setNavigationBarTitle({
-					title: '编辑工单'
+					title: '编辑业务单单'
 				})
 			}
 		},

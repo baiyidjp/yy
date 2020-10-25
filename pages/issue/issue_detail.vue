@@ -2,7 +2,7 @@
 	<view class="issue-item">
 		<view class="top-wrap">
 			<text class="title">{{ checkedClient.clientName }}</text>
-			<u-tag :text="issueFinish ? '已完成' : '未完成'" :type="issueFinish ? 'primary' : 'warning'"></u-tag>
+			<u-tag :text="issueFinish ? '已完成' : '未完成'" :type="issueFinish ? 'success' : 'error'"></u-tag>
 		</view>
 		<text class="sub-title">渠道: {{ checkedChannel.channelName }}</text>
 		<text class="sub-title">税源地: {{ checkedCompany.companyName }}</text>
@@ -15,7 +15,7 @@
 				<text class="sub-title">返佣时间: {{ rebateInfo.date}}</text>
 				<text class="sub-title">应返佣金: {{ rebateInfo.amount}}</text>
 			</view>
-			<u-button class="flag-button" @click="onClickFlagButton(rebateInfo)" :type="rebateInfo.isFinish ? 'warning' : 'primary'">{{ rebateInfo.isFinish ? '标记为未完成' : '标记为已完成' }}</u-button>
+			<u-button class="flag-button" @click="onClickFlagButton(rebateInfo)" :type="rebateInfo.isFinish ? 'error' : 'success'">{{ rebateInfo.isFinish ? '标记为未完成' : '标记为已完成' }}</u-button>
 		</view>
 		<text class="sub-title">备注: {{ issue.mark.length > 0 ? issue.mark : '无' }}</text>
 	</view>
