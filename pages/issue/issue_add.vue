@@ -34,6 +34,9 @@
 			<u-form-item v-if="checkedCompany" label="返佣时间:" v-for="(rebateInfo, index) in issue.rebateInfoList" :key="rebateInfo.date">
 				<text>{{ rebateInfo.date }} 应返佣金: {{ index === 0 ? firstRebateAmount : secondRebateAmount}}</text>
 			</u-form-item>
+			<u-form-item label="发票状态:" prop="invoiceStatusId">
+				<u-input :value="checkedInvoiceStatus.status" type="select" placeholder="请选择发票状态(单选)" @click="onClickInvoiceList" />
+			</u-form-item>
 			<u-form-item label="备注:">
 				<u-input v-model="issue.mark" type="textarea" :auto-height="true" height="44" placeholder="请输入备注(选填)" />
 			</u-form-item>
@@ -67,6 +70,18 @@
 			</view>
 		</u-popup>
 		<u-calendar v-model="showCalendar" mode="date" max-date="2099-01-01" @change="onChangeDate"></u-calendar>
+		<u-popup v-model="showInvoicePop" mode="center" border-radius="10" width="95%" :closeable="true">
+			<view class="show-pop">
+				<view class="show-pop-title">
+					请选择发票状态(单选)
+				</view>
+				<u-radio-group :wrap="true" v-model="issue.invoiceStatusId">
+					<u-radio v-for="(invoice, index) in showInvoiceStatusList" :key="index" :name="invoice._id" @change="onChangeInvoiceStatus">
+						{{invoice.status}}
+					</u-radio>
+				</u-radio-group>
+			</view>
+		</u-popup>
 	</view>
 </template>
 
@@ -97,6 +112,8 @@
 					myAmount: 0,
 					// 返佣信息 
 					rebateInfoList: [],
+					// 发票状态Id
+					invoiceStatusId: '',
 					mark: '',
 					openid: '',
 					createAt: null,
@@ -169,13 +186,28 @@
 				// 选择的税源地
 				checkedCompany: null,
 				// 展示日历
-				showCalendar: false
+				showCalendar: false,
+				// 展示发票状态列表
+				showInvoicePop: false,
+				showInvoiceStatusList: [],
+				// 当前选中的发票状态
+				checkedInvoiceStatus: null
 			}
 		},
 		onLoad(option) {
 			if (option.issue) {
 				this.issue = JSON.parse(option.issue)
 				this.isEdit = true
+			}
+			if (this.invoiceStatusList.length > 0) {
+				this.showInvoiceStatusList = this.invoiceStatusList.map(invoiceStatus => {
+					return {
+						_id: invoiceStatus._id,
+						status: invoiceStatus.status,
+						checked: false
+					}
+				})
+				this.checkedInvoiceStatus = this.invoiceStatusList.find(invoiceStatus => invoiceStatus._id === this.issue.invoiceStatusId)
 			}
 		},
 		onShow() {
@@ -200,7 +232,7 @@
 			}
 		},
 		computed: {
-			...mapGetters(['currentUser', 'issueList', 'clientList', 'channelList', 'companyList']),
+			...mapGetters(['currentUser', 'issueList', 'clientList', 'channelList', 'companyList', 'invoiceStatusList']),
 			// 客户关联的渠道名
 			clientChannelName() {
 				if (this.checkedClient) {
@@ -415,6 +447,16 @@
 					}
 					return rebateInfo
 				})
+			},
+			// 弹出选择发票状态
+			onClickInvoiceList() {
+				this.showInvoicePop = true
+			},
+			// 选了发票状态
+			onChangeInvoiceStatus(id) {
+				this.issue.invoiceStatusId= id
+				this.checkedInvoiceStatus = this.invoiceStatusList.find(invoiceStatus => invoiceStatus._id === id)
+				this.showInvoicePop = false
 			},
 			// 提交
 			onClickSubmit() {

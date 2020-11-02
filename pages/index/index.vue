@@ -32,7 +32,7 @@
 			this.checkAccess()
 		},
 		methods: {
-			...mapMutations(['UPDATECURRENTUSER', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST', 'UPDATEISSUELIST', 'UPDATEREBATEINFOLIST', 'UPDATECONTRACTSTATUS']),
+			...mapMutations(['UPDATECURRENTUSER', 'UPDATECOMPANYLIST', 'UPDATECLIENTLIST', 'UPDATECHANNELLIST', 'UPDATEISSUELIST', 'UPDATEREBATEINFOLIST', 'UPDATECONTRACTSTATUS', 'UPDATEINVOICESTATUS']),
 			checkAccess() {
 				const self = this
 				self.user = null;
@@ -77,6 +77,9 @@
 									})
 									self.UPDATECONTRACTSTATUS({
 										contractStatusList: result.contractStatusList.data
+									})
+									self.UPDATEINVOICESTATUS({
+										invoiceStatusList: result.invoiceStatusList.data
 									})
 									// 有权限使用小程序 跳转首页
 									uni.switchTab({
