@@ -10,7 +10,8 @@ const store = new Vuex.Store({
 		clientList: null,
 		channelList: null,
 		issueList: null,
-		rebateInfoList: null
+		rebateInfoList: null,
+		contractStatusList: null
 	},
 	getters: {
 		currentUser: state => {
@@ -30,6 +31,9 @@ const store = new Vuex.Store({
 		},
 		rebateInfoList: state => {
 			return state.rebateInfoList
+		},
+		contractStatusList: state => {
+			return state.contractStatusList
 		}
 	},
 	mutations: {
@@ -100,6 +104,10 @@ const store = new Vuex.Store({
 		UPDATEREBATEINFOLIST (state, payload) {
 			state.rebateInfoList = payload.rebateInfoList
 		},
+		// contract list
+		UPDATECONTRACTSTATUS (state, payload) {
+			state.contractStatusList = payload.contractStatusList
+		}
 	},
 	actions: {
 	}

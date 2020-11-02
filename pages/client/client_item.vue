@@ -8,6 +8,7 @@
 		<text class="sub-title">税源地: {{ clientCompanyNames }}</text>
 		<text class="sub-title">渠道: {{ clientChannelName }}</text>
 		<text class="sub-title">签约时间: {{ client.signupTime}}</text>
+		<text class="sub-title">合同状态: {{ clientContractStatus}}</text>
 		<text class="sub-title">备注: {{ client.mark.length > 0 ? client.mark : '无' }}</text>
 	</view>
 </template>
@@ -25,7 +26,7 @@
 			index: null
 		},
 		computed: {
-			...mapGetters(['companyList', 'channelList']),
+			...mapGetters(['companyList', 'channelList', 'contractStatusList']),
 			clientCompanyNames() {
 				const companyListInfo = this.companyList.filter(company => this.client.companyIds.includes(company._id))
 				const names = companyListInfo.map(company => company.companyName)
@@ -42,6 +43,13 @@
 				const channelInfo = this.channelList.find(channel => channel._id === this.client.channelId)
 				if (channelInfo) {
 					return channelInfo.channelName
+				}
+				return '无/被删除'
+			},
+			clientContractStatus() {
+				const contractStatusInfo = this.contractStatusList.find(contractStatus => contractStatus._id === this.client.contractStatusId)
+				if (contractStatusInfo) {
+					return contractStatusInfo.status
 				}
 				return '无/被删除'
 			}
