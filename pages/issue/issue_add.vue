@@ -364,7 +364,12 @@
 					let dateString = rebateDate.date
 					const type = rebateDate.type
 					const currentDate = new Date()
-					// type 0-当天 1-下周二 2-次月25号
+					// type
+					// 0-当天 
+					// 1-下周二 
+					// 2-次月25号 
+					// 3-次月15号 
+					// 4-次次月25号
 					if (type === 0) {
 						dateString = this.$util.timeFormat(currentDate.getTime())
 					}
@@ -387,6 +392,28 @@
 							year += 1
 						}
 						// 设置下一个月25号的日期
+						currentDate.setFullYear(year, month, 25)
+						dateString = this.$util.timeFormat(currentDate.getTime())
+					}
+					if (type === 3) {
+						let year = currentDate.getFullYear()
+						let month = currentDate.getMonth() + 1
+						if (month > 11) {
+							month = 0
+							year += 1
+						}
+						// 设置下一个月15号的日期
+						currentDate.setFullYear(year, month, 15)
+						dateString = this.$util.timeFormat(currentDate.getTime())
+					}
+					if (type === 4) {
+						let year = currentDate.getFullYear()
+						let month = currentDate.getMonth() + 2
+						if (month > 11) {
+							month = 0
+							year += 1
+						}
+						// 设置下下一个月25号的日期
 						currentDate.setFullYear(year, month, 25)
 						dateString = this.$util.timeFormat(currentDate.getTime())
 					}
