@@ -27,7 +27,7 @@
 				<view class="show-pop-title">
 					请选择税源地(单选)
 				</view>
-				<u-radio-group v-model="currentCompanyId">
+				<u-radio-group :wrap="true" v-model="currentCompanyId">
 					<u-radio v-for="(company, index) in companyList" :key="index" :name="company._id" @change="onChangeChooseCompany">
 						{{company.companyName}} ({{company.serviceCharge}}% | {{company.serviceChargeSmall}}%)
 					</u-radio>
