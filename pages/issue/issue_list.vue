@@ -1,13 +1,21 @@
 <template>
 	<block v-if="issueList.length > 0">
 		<view class="wrap">
+			<view class="dropdowns-wrap">
+				<u-dropdown>
+					<u-dropdown-item v-model="filterInfoValue.currentYear" :title="filterInfoLabel.year" :options="issueYears"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentDay" :title="filterInfoLabel.day" :options="issueDays"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses"></u-dropdown-item>
+				</u-dropdown>
+			</view>
 			<block v-for="(issue, index) in issueList" :key="issue._id">
 				<issue-item :issue="issue" @delete="onClickDelete(issue)"></issue-item>
 			</block>
 			<view class="buttons-wrap">
-				<view class="button-icon" @click="onClickFilterButton">
+<!-- 				<view class="button-icon" @click="onClickFilterButton">
 					<u-icon name="list" color="#ffffff" size="60"></u-icon>
-				</view>
+				</view> -->
 				<view class="button-icon" @click="onClickAddButton">
 					<u-icon name="plus" color="#ffffff" size="60"></u-icon>
 				</view>
@@ -15,16 +23,6 @@
 			<u-toast ref="uToast" />
 			<u-modal v-model="showDeleteModal" content="删除后无法恢复,请确认是否删除?" :show-cancel-button="true" confirm-text="删除"
 			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete" @cancel="onClickCancelDelete"></u-modal>
-			<u-popup v-model="showFilterPop" mode="top" height="50%">
-				<view class="dropdowns-wrap">
-					<u-dropdown>
-						<u-dropdown-item v-model="filterInfoValue.currentYear" :title="filterInfoLabel.year" :options="issueYears"></u-dropdown-item>
-						<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths"></u-dropdown-item>
-						<u-dropdown-item v-model="filterInfoValue.currentDay" :title="filterInfoLabel.day" :options="issueDays"></u-dropdown-item>
-						<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses"></u-dropdown-item>
-					</u-dropdown>
-				</view>
-			</u-popup>
 		</view>
 	</block>
 	<block v-else>
@@ -108,7 +106,7 @@
 					value: month
 				}
 			})
-			this.issueMonths = [defaultObj, ...months]
+			this.issueMonths = [defaultObj, ...months, ...months, ...months, ...months]
 			
 			const days = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.day)])).sort().map(day => {
 				return {
@@ -233,7 +231,7 @@
 		width: 44px;
 		height: 94px;
 		display: flex;
-		flex-direction: column;
+		flex-direction: column-reverse;
 		justify-content: space-between;
 		align-items: center;
 	}
@@ -282,16 +280,5 @@
 		margin-top: 5px;
 		font-size: 14px;
 		color: $u-content-color;
-	}
-
-	.dropdowns-wrap {
-		// display: flex;
-		// flex-direction: column;
-		// align-items: center;
-		// width: 100%;
-	}
-
-	.dropdown-wrap {
-		// margin-bottom: 50px;
 	}
 </style>
