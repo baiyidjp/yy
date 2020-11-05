@@ -204,7 +204,8 @@
 				this.checkedChannel = this.channelList.find(channel => channel._id === this.checkedClient.channelId)
 				this.checkedClientCompanyList = this.companyList.filter(company => this.checkedClient.companyIds.includes(company._id))
 				this.checkedCompany = this.companyList.find(company => company._id === this.issue.companyId)
-				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId === this.issue.companyId)
+				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId ===
+					this.issue.companyId)
 			}
 			if (this.invoiceStatusList.length > 0) {
 				this.showInvoiceStatusList = this.invoiceStatusList.map(invoiceStatus => {
@@ -344,7 +345,8 @@
 				this.issue.companyId = id
 				this.checkedCompany = this.companyList.find(company => company._id === id)
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
-				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId === id)
+				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId ===
+					id)
 				this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
 				this.handleRebateInfoList()
 				this.showCompanyPop = false
@@ -353,160 +355,94 @@
 			onChangeCompanyServiceCharge(value) {
 				if (value === this.checkedCompany.serviceCharge) {
 					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
-					this.handleRebateInfoList()
+					this.handleRebateInfoList(false)
 				}
 				if (value === this.checkedCompany.serviceChargeSmall) {
 					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPointSmall
-					this.handleRebateInfoListSmall()
+					this.handleRebateInfoList(true)
 				}
 			},
-			handleRebateInfoList() {
-				this.issue.rebateInfoList = this.checkedCompany.rebateInfoList.map(rebateDate => {
-					// 转为具体的 年月日
-					let dateString = rebateDate.date
-					const type = rebateDate.type
-					const currentDate = new Date()
-					// type
-					// 0-当天 
-					// 1-下周二 
-					// 2-次月25号 
-					// 3-次月15号 
-					// 4-次次月25号
-					if (type === 0) {
-						dateString = this.$util.timeFormat(currentDate.getTime())
-					}
-					if (type === 1) {
-						const currentDay = currentDate.getDay()
-						let moreDay = 0
-						// 算出多加几天的时间 周末是0 直接加2天
-						if (currentDay === 0) {
-							moreDay = 2
-						} else {
-							moreDay = 9 - currentDay
-						}
-						dateString = this.$util.timeFormat(currentDate.getTime() + moreDay * 24 * 60 * 60 * 1000)
-					}
-					if (type === 2) {
-						let year = currentDate.getFullYear()
-						let month = currentDate.getMonth() + 1
-						if (month > 11) {
-							month = 0
-							year += 1
-						}
-						// 设置下一个月25号的日期
-						currentDate.setFullYear(year, month, 25)
-						dateString = this.$util.timeFormat(currentDate.getTime())
-					}
-					if (type === 3) {
-						let year = currentDate.getFullYear()
-						let month = currentDate.getMonth() + 1
-						if (month > 11) {
-							month = 0
-							year += 1
-						}
-						// 设置下一个月15号的日期
-						currentDate.setFullYear(year, month, 15)
-						dateString = this.$util.timeFormat(currentDate.getTime())
-					}
-					if (type === 4) {
-						let year = currentDate.getFullYear()
-						let month = currentDate.getMonth() + 2
-						if (month > 11) {
-							month = 0
-							year += 1
-						}
-						// 设置下下一个月25号的日期
-						currentDate.setFullYear(year, month, 25)
-						dateString = this.$util.timeFormat(currentDate.getTime())
-					}
-					const dateStringArray = dateString.split('-')
-					const rebateInfo = {
-						date: dateString,
-						type: type,
-						scale: rebateDate.scale,
-						isFinish: false
-					}
-					if (dateStringArray.length === 3) {
-						rebateInfo['year'] = dateStringArray[0]
-						rebateInfo['month'] = dateStringArray[1]
-						rebateInfo['day'] = dateStringArray[2]
-					}
-					return rebateInfo
+			// 处理数据 区别是否是小额
+			handleRebateInfoList(isSmall) {
+				let rebateInfoList = this.checkedCompany.rebateInfoList
+				if (isSmall) {
+					rebateInfoList = this.checkedCompany.rebateInfoListSmall
+				}
+				this.issue.rebateInfoList = rebateInfoList.map(rebateDate => {
+					return this.getRebateInfo(rebateDate)
 				})
 			},
-			handleRebateInfoListSmall() {
-				this.issue.rebateInfoList = this.checkedCompany.rebateInfoListSmall.map(rebateDate => {
-					// 转为具体的 年月日
-					let dateString = rebateDate.date
-					const type = rebateDate.type
-					const currentDate = new Date()
-					// type 
-					// 0-当天 
-					// 1-下周二 
-					// 2-次月25号 
-					// 3-次月15号 
-					// 4-次次月25号
-					if (type === 0) {
-						dateString = this.$util.timeFormat(currentDate.getTime())
+			getRebateInfo(rebateDate) {
+				// 转为具体的 年月日
+				let dateString = rebateDate.date
+				const type = rebateDate.type
+				const currentDate = new Date()
+				// type
+				// 0-当天 
+				// 1-下周二 
+				// 2-次月25号 
+				// 3-次月15号 
+				// 4-次次月25号
+				if (type === 0) {
+					dateString = this.$util.timeFormat(currentDate.getTime())
+				}
+				if (type === 1) {
+					const currentDay = currentDate.getDay()
+					let moreDay = 0
+					// 算出多加几天的时间 周末是0 直接加2天
+					if (currentDay === 0) {
+						moreDay = 2
+					} else {
+						moreDay = 9 - currentDay
 					}
-					if (type === 1) {
-						const currentDay = currentDate.getDay()
-						let moreDay = 0
-						// 算出多加几天的时间 周末是0 直接加2天
-						if (currentDay === 0) {
-							moreDay = 2
-						} else {
-							moreDay = 9 - currentDay
-						}
-						dateString = this.$util.timeFormat(currentDate.getTime() + moreDay * 24 * 60 * 60 * 1000)
+					dateString = this.$util.timeFormat(currentDate.getTime() + moreDay * 24 * 60 * 60 * 1000)
+				}
+				if (type === 2) {
+					let year = currentDate.getFullYear()
+					let month = currentDate.getMonth() + 1
+					if (month > 11) {
+						month = 0
+						year += 1
 					}
-					if (type === 2) {
-						let year = currentDate.getFullYear()
-						let month = currentDate.getMonth() + 1
-						if (month > 11) {
-							month = 0
-							year += 1
-						}
-						// 设置下一个月25号的日期
-						currentDate.setFullYear(year, month, 25)
-						dateString = this.$util.timeFormat(currentDate.getTime())
+					// 设置下一个月25号的日期
+					currentDate.setFullYear(year, month, 25)
+					dateString = this.$util.timeFormat(currentDate.getTime())
+				}
+				if (type === 3) {
+					let year = currentDate.getFullYear()
+					let month = currentDate.getMonth() + 1
+					if (month > 11) {
+						month = 0
+						year += 1
 					}
-					if (type === 3) {
-						let year = currentDate.getFullYear()
-						let month = currentDate.getMonth() + 1
-						if (month > 11) {
-							month = 0
-							year += 1
-						}
-						// 设置下一个月15号的日期
-						currentDate.setFullYear(year, month, 15)
-						dateString = this.$util.timeFormat(currentDate.getTime())
+					// 设置下一个月15号的日期
+					currentDate.setFullYear(year, month, 15)
+					dateString = this.$util.timeFormat(currentDate.getTime())
+				}
+				if (type === 4) {
+					let year = currentDate.getFullYear()
+					let month = currentDate.getMonth() + 2
+					if (month > 11) {
+						month = 0
+						year += 1
 					}
-					if (type === 4) {
-						let year = currentDate.getFullYear()
-						let month = currentDate.getMonth() + 2
-						if (month > 11) {
-							month = 0
-							year += 1
-						}
-						// 设置下下一个月25号的日期
-						currentDate.setFullYear(year, month, 25)
-						dateString = this.$util.timeFormat(currentDate.getTime())
-					}
-					const dateStringArray = dateString.split('-')
-					const rebateInfo = {
-						date: dateString,
-						type: type,
-						scale: rebateDate.scale,
-						isFinish: false
-					}
-					if (dateStringArray.length === 3) {
-						rebateInfo['year'] = dateStringArray[0]
-						rebateInfo['month'] = dateStringArray[1]
-						rebateInfo['day'] = dateStringArray[2]
-					}
-					return rebateInfo
-				})
+					// 设置下下一个月25号的日期
+					currentDate.setFullYear(year, month, 25)
+					dateString = this.$util.timeFormat(currentDate.getTime())
+				}
+				const rebateInfo = {
+					date: dateString,
+					type: type,
+					scale: rebateDate.scale,
+					isFinish: false
+				}
+				const dateStringArray = dateString.split('-')
+				if (dateStringArray.length === 3) {
+					rebateInfo['year'] = dateStringArray[0]
+					rebateInfo['month'] = dateStringArray[1]
+					rebateInfo['day'] = dateStringArray[2]
+				}
+				return rebateInfo
 			},
 			// 弹出选择发票状态
 			onClickInvoiceList() {

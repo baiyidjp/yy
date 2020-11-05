@@ -4,12 +4,27 @@
 			<block v-for="(issue, index) in issueList" :key="issue._id">
 				<issue-item :issue="issue" @delete="onClickDelete(issue)"></issue-item>
 			</block>
-			<view class="add-wrap" @click="onClickAddButton">
-				<u-icon name="plus" color="#ffffff" size="60"></u-icon>
+			<view class="buttons-wrap">
+				<view class="button-icon" @click="onClickFilterButton">
+					<u-icon name="list" color="#ffffff" size="60"></u-icon>
+				</view>
+				<view class="button-icon" @click="onClickAddButton">
+					<u-icon name="plus" color="#ffffff" size="60"></u-icon>
+				</view>
 			</view>
 			<u-toast ref="uToast" />
 			<u-modal v-model="showDeleteModal" content="删除后无法恢复,请确认是否删除?" :show-cancel-button="true" confirm-text="删除"
 			 confirm-color="#fa3534" :async-close="true" @confirm="onClickConfirmDelete" @cancel="onClickCancelDelete"></u-modal>
+			<u-popup v-model="showFilterPop" mode="top" height="50%">
+				<view class="dropdowns-wrap">
+					<u-dropdown>
+						<u-dropdown-item v-model="filterInfoValue.currentYear" :title="filterInfoLabel.year" :options="issueYears"></u-dropdown-item>
+						<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths"></u-dropdown-item>
+						<u-dropdown-item v-model="filterInfoValue.currentDay" :title="filterInfoLabel.day" :options="issueDays"></u-dropdown-item>
+						<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses"></u-dropdown-item>
+					</u-dropdown>
+				</view>
+			</u-popup>
 		</view>
 	</block>
 	<block v-else>
@@ -30,7 +45,18 @@
 		data() {
 			return {
 				showDeleteModal: false,
-				deleteIssue: null
+				deleteIssue: null,
+				showFilterPop: false,
+				filterInfoValue: {
+					currentYear: '',
+					currentMonth: '',
+					currentDay: '',
+					currentRebateStatus: ''
+				},
+				issueYears: [],
+				issueMonths: [],
+				issueDays: [],
+				issueRebateStatuses: []
 			};
 		},
 		onPullDownRefresh() {
@@ -50,11 +76,81 @@
 				uni.stopPullDownRefresh()
 			})
 		},
+		onLoad() {
+			this.issueRebateStatuses = [{
+					label: '全部',
+					value: '',
+				}, {
+					label: '已完成',
+					value: 'finish',
+				}, {
+					label: '未完成',
+					value: 'unfinish',
+				}]
+		},
+		onShow() {
+			const defaultObj = {
+				label: '全部',
+				value: ''
+			}
+			const allRebateDataInfo = this.issueList.map(issue => issue.rebateInfoList).flat()
+			const years = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.year)])).sort().map(year => {
+				return {
+					label: year,
+					value: year
+				}
+			})
+			this.issueYears = [defaultObj, ...years]
+			
+			const months = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.month)])).sort().map(month => {
+				return {
+					label: month,
+					value: month
+				}
+			})
+			this.issueMonths = [defaultObj, ...months]
+			
+			const days = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.day)])).sort().map(day => {
+				return {
+					label: day,
+					value: day
+				}
+			})
+			this.issueDays = [defaultObj, ...days]
+		},
 		components: {
 			IssueItem
 		},
 		computed: {
-			...mapGetters(['currentUser', 'issueList'])
+			...mapGetters(['currentUser', 'issueList']),
+			filterInfoLabel() {
+				let year = '选择年'
+				const yearInfo = this.issueYears.find(year => year.value === this.filterInfoValue.currentYear)
+				if (yearInfo && yearInfo.value.length > 0) {
+					year = yearInfo.label
+				}
+				let month = '选择月'
+				const monthInfo = this.issueMonths.find(month => month.value === this.filterInfoValue.currentMonth)
+				if (monthInfo && monthInfo.value.length > 0) {
+					month = monthInfo.label
+				}
+				let day = '选择天'
+				const dayInfo = this.issueDays.find(day => day.value === this.filterInfoValue.currentDay)
+				if (dayInfo && dayInfo.value.length > 0) {
+					day = dayInfo.label
+				}
+				let rebateStatus = '选择状态'
+				const rebateStatusInfo = this.issueRebateStatuses.find(rebateStatus => rebateStatus.value === this.filterInfoValue.currentRebateStatus)
+				if (rebateStatusInfo && rebateStatusInfo.value.length > 0) {
+					rebateStatus = rebateStatusInfo.label
+				}
+				return {
+					year,
+					month,
+					day,
+					rebateStatus
+				}
+			}
 		},
 		methods: {
 			...mapMutations(['DELETEISSUE', 'UPDATEISSUELIST']),
@@ -62,6 +158,9 @@
 				uni.navigateTo({
 					url: './issue_add'
 				})
+			},
+			onClickFilterButton() {
+				this.showFilterPop = true
 			},
 			onClickEdit(issue) {
 				uni.navigateTo({
@@ -127,10 +226,19 @@
 		margin-top: 10px;
 	}
 
-	.add-wrap {
+	.buttons-wrap {
 		position: fixed;
 		bottom: 10px;
 		right: 10px;
+		width: 44px;
+		height: 94px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.buttons-wrap .button-icon {
 		width: 44px;
 		height: 44px;
 		background-color: $u-type-primary;
@@ -174,5 +282,16 @@
 		margin-top: 5px;
 		font-size: 14px;
 		color: $u-content-color;
+	}
+
+	.dropdowns-wrap {
+		// display: flex;
+		// flex-direction: column;
+		// align-items: center;
+		// width: 100%;
+	}
+
+	.dropdown-wrap {
+		// margin-bottom: 50px;
 	}
 </style>
