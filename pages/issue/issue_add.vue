@@ -112,6 +112,8 @@
 					myAmount: 0,
 					// 返佣信息 
 					rebateInfoList: [],
+					// 是否已经返佣完毕
+					issueFinish: false,
 					// 发票状态Id
 					invoiceStatusId: '',
 					mark: '',

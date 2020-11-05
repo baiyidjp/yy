@@ -8,7 +8,7 @@
 		</view>
 		<text class="sub-title">税源地: {{ checkedCompany.companyName }}</text>
 		<text class="sub-title">众包费: {{ issue.totalAmount }}</text>
-		<text class="sub-title" :class="issueFinish ? 'issue-item-finish' : 'issue-item-unfinish'">业务单状态: {{issueFinish ? '已完成' : '未完成' }}</text>
+		<text class="sub-title" :class="issue.issueFinish ? 'issue-item-finish' : 'issue-item-unfinish'">业务单状态: {{issue.issueFinish ? '已完成' : '未完成' }}</text>
 		<text class="sub-title">发票状态: {{ issueInvoiceStatus }}</text>
 		<text class="sub-title">备注: {{ issue.mark.length > 0 ? issue.mark : '无' }}</text>
 	</view>
@@ -28,18 +28,6 @@
 		},
 		computed: {
 			...mapGetters(['currentUser', 'issueList', 'clientList', 'channelList', 'companyList', 'invoiceStatusList']),
-			issueFinish() {
-				if (this.issue) {
-					let isFinish = true
-					this.issue.rebateInfoList.forEach(rebateInfo => {
-						if (!rebateInfo.isFinish) {
-							isFinish = false
-						}
-					})
-					return isFinish
-				}
-				return false
-			},
 			checkedClient() {
 				if (this.issue) {
 					return this.clientList.find(client => client._id === this.issue.clientId)

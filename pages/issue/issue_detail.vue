@@ -3,7 +3,7 @@
 		<view class="top-wrap">
 			<text class="title">{{ checkedClient.clientName }}</text>
 			<view class="tag-wrap">
-				<u-tag :text="issueFinish ? '已完成' : '未完成'" :type="issueFinish ? 'success' : 'error'"></u-tag>
+				<u-tag :text="issue.issueFinish ? '已完成' : '未完成'" :type="issue.issueFinish ? 'success' : 'error'"></u-tag>
 				<u-tag text="编辑" @click="onClickEdit"></u-tag>
 			</view>
 		</view>
@@ -105,6 +105,7 @@
 			onClickFlagButton(rebateInfo) {
 				const self = this
 				rebateInfo.isFinish = !rebateInfo.isFinish
+				self.issue.issueFinish = self.issueFinish
 				self.issue.updateAt = Date.now()
 				self.issue.updateBy = self.issue.openid
 				uni.showLoading()
