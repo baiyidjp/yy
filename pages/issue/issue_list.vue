@@ -2,11 +2,11 @@
 	<block v-if="issueList.length > 0">
 		<view class="wrap">
 			<view class="dropdowns-wrap">
-				<u-dropdown>
-					<u-dropdown-item v-model="filterInfoValue.currentYear" :title="filterInfoLabel.year" :options="issueYears"></u-dropdown-item>
-					<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths"></u-dropdown-item>
-					<u-dropdown-item v-model="filterInfoValue.currentDay" :title="filterInfoLabel.day" :options="issueDays"></u-dropdown-item>
-					<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses"></u-dropdown-item>
+				<u-dropdown :height="'40px'" @open="onOpenDropdwonItem">
+					<u-dropdown-item v-model="filterInfoValue.currentYear" :title="filterInfoLabel.year" :options="issueYears" :height="dropdownItemListHeight"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths" :height="dropdownItemListHeight"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentDay" :title="filterInfoLabel.day" :options="issueDays" :height="dropdownItemListHeight"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses" :height="dropdownItemListHeight"></u-dropdown-item>
 				</u-dropdown>
 			</view>
 			<block v-for="(issue, index) in issueList" :key="issue._id">
@@ -44,6 +44,7 @@
 			return {
 				showDeleteModal: false,
 				deleteIssue: null,
+				dropdownItemListHeight: 'auto',
 				showFilterPop: false,
 				filterInfoValue: {
 					currentYear: '',
@@ -106,7 +107,7 @@
 					value: month
 				}
 			})
-			this.issueMonths = [defaultObj, ...months, ...months, ...months, ...months]
+			this.issueMonths = [defaultObj, ...months]
 			
 			const days = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.day)])).sort().map(day => {
 				return {
@@ -157,9 +158,6 @@
 					url: './issue_add'
 				})
 			},
-			onClickFilterButton() {
-				this.showFilterPop = true
-			},
 			onClickEdit(issue) {
 				uni.navigateTo({
 					url: `./issue_add?issue=${JSON.stringify(issue)}`
@@ -203,8 +201,22 @@
 						type: 'error'
 					})
 				}
+			},
+			onOpenDropdwonItem(index) {
+				const height = getApp().globalData.screenHeight - getApp().globalData.navigationBarHeight - 40 - getApp().globalData.bottomArea - 50
+				if (index === 0 && this.issueYears.length * 53 > height) {
+					this.dropdownItemListHeight = `${height}px`
+				} else if (index === 1 && this.issueMonths.length * 53 > height) {
+					this.dropdownItemListHeight = `${height}px`
+				} else if (index === 2 && this.issueDays.length * 53 > height) {
+					this.dropdownItemListHeight = `${height}px`
+				} else if (index === 3 && this.issueRebateStatuses.length * 53 > height) {
+					this.dropdownItemListHeight = `${height}px`
+				} else {
+					this.dropdownItemListHeight = 'auto'
+				}
 			}
-		},
+		}
 	}
 </script>
 
