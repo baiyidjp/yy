@@ -4,20 +4,31 @@
 			<view class="dropdowns-wrap">
 				<u-dropdown :height="'40px'" @open="onOpenDropdwonItem" @close="onCloseDropdwonItem">
 					<u-dropdown-item v-model="filterInfoValue.currentYear" :title="filterInfoLabel.year" :options="issueYears" :height="dropdownItemListHeight"></u-dropdown-item>
-					<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths"
+					<u-dropdown-item v-model="filterInfoValue.currentMonth" :disabled="!dropdownItemMothAbled" :title="filterInfoLabel.month" :options="issueMonths"
 					 :height="dropdownItemListHeight"></u-dropdown-item>
-					<u-dropdown-item v-model="filterInfoValue.currentDay" :title="filterInfoLabel.day" :options="issueDays" :height="dropdownItemListHeight"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentDay" :disabled="!dropdownItemDayAbled" :title="filterInfoLabel.day" :options="issueDays" :height="dropdownItemListHeight"></u-dropdown-item>
 					<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses"
 					 :height="dropdownItemListHeight"></u-dropdown-item>
 				</u-dropdown>
+			</view>
+			<view class="total-amount-wrap">
+				<view class="rebate-wrap">
+					<text class="text-top">总返佣</text>
+					<text class="text-bottom total-text">{{ totalAmount }}</text>
+				</view>
+				<view class="rebate-wrap">
+					<text class="text-top">已返佣</text>
+					<text class="text-bottom finish-text">{{ finishAmount }}</text>
+				</view>
+				<view class="rebate-wrap">
+					<text class="text-top">未返佣</text>
+					<text class="text-bottom unfinish-text">{{ unfinishAmount }}</text>
+				</view>
 			</view>
 			<block v-for="(issue, index) in showIssueList" :key="issue._id">
 				<issue-item :issue="issue" @delete="onClickDelete(issue)"></issue-item>
 			</block>
 			<view class="buttons-wrap">
-				<!-- 				<view class="button-icon" @click="onClickFilterButton">
-					<u-icon name="list" color="#ffffff" size="60"></u-icon>
-				</view> -->
 				<view class="button-icon" @click="onClickAddButton">
 					<u-icon name="plus" color="#ffffff" size="60"></u-icon>
 				</view>
@@ -99,7 +110,7 @@
 			const allRebateDataInfo = this.issueList.map(issue => issue.rebateInfoList).flat()
 			const years = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.year)])).sort().map(year => {
 				return {
-					label: year,
+					label: year + '年',
 					value: year
 				}
 			})
@@ -107,7 +118,7 @@
 
 			const months = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.month)])).sort().map(month => {
 				return {
-					label: month,
+					label: month + '月',
 					value: month
 				}
 			})
@@ -115,7 +126,7 @@
 
 			const days = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.day)])).sort().map(day => {
 				return {
-					label: day,
+					label: day + '日',
 					value: day
 				}
 			})
@@ -137,7 +148,7 @@
 				if (monthInfo && monthInfo.value.length > 0) {
 					month = monthInfo.label
 				}
-				let day = '选择天'
+				let day = '选择日'
 				const dayInfo = this.issueDays.find(day => day.value === this.filterInfoValue.currentDay)
 				if (dayInfo && dayInfo.value.length > 0) {
 					day = dayInfo.label
@@ -153,6 +164,41 @@
 					day,
 					rebateStatus
 				}
+			},
+			dropdownItemMothAbled() {
+				return this.filterInfoValue.currentYear.length > 0
+			},
+			dropdownItemDayAbled() {
+				return this.filterInfoValue.currentYear.length > 0 && this.filterInfoValue.currentMonth.length > 0
+			},
+			totalAmount() {
+				if (this.showIssueList.length > 0) {
+					return this.showRebateInfoList.reduce((accumulator, currentValue) => {
+						return parseFloat(accumulator) + parseFloat(currentValue.amount)
+					}, 0)
+				}
+				return 0
+			},
+			finishAmount() {
+				const finishRebateInfoList = this.showRebateInfoList.filter(rebateInfo => rebateInfo.isFinish)
+				if (finishRebateInfoList.length > 0) {
+					return finishRebateInfoList.reduce((accumulator, currentValue) => {
+						return parseFloat(accumulator) + parseFloat(currentValue.amount)
+					}, 0)
+				}
+				return 0
+			},
+			unfinishAmount() {
+				const unfinishRebateInfoList = this.showRebateInfoList.filter(rebateInfo => !rebateInfo.isFinish)
+				if (unfinishRebateInfoList.length > 0) {
+					return unfinishRebateInfoList.reduce((accumulator, currentValue) => {
+						return parseFloat(accumulator) + parseFloat(currentValue.amount)
+					}, 0)
+				}
+				return 0
+			},
+			showRebateInfoList() {
+				return this.showIssueList.map(issue => issue.rebateInfoList).flat()
 			}
 		},
 		methods: {
@@ -168,13 +214,17 @@
 				}
 				if (this.filterInfoValue.currentMonth.length > 0) {
 					this.showIssueList = this.showIssueList.filter(issue => {
-						const filterRebateInfo = issue.rebateInfoList.filter(rebate => rebate.month === self.filterInfoValue.currentMonth)
+						const filterRebateInfo = issue.rebateInfoList.filter(rebate => {
+							return rebate.month === self.filterInfoValue.currentMonth && rebate.year === self.filterInfoValue.currentYear
+						})
 						return filterRebateInfo && filterRebateInfo.length > 0 ? true : false
 					})
 				}
 				if (this.filterInfoValue.currentDay.length > 0) {
 					this.showIssueList = this.showIssueList.filter(issue => {
-						const filterRebateInfo = issue.rebateInfoList.filter(rebate => rebate.day === self.filterInfoValue.currentDay)
+						const filterRebateInfo = issue.rebateInfoList.filter(rebate => {
+							return rebate.day === self.filterInfoValue.currentDay && rebate.month === self.filterInfoValue.currentMonth && rebate.year === self.filterInfoValue.currentYear
+						})
 						return filterRebateInfo && filterRebateInfo.length > 0 ? true : false
 					})
 				}
@@ -234,6 +284,7 @@
 								title: '删除成功',
 								type: 'success'
 							})
+							self.filterIssueList()
 						}
 					})
 				} else {
@@ -259,6 +310,13 @@
 				}
 			},
 			onCloseDropdwonItem() {
+				if (this.filterInfoValue.currentYear.length <= 0) {
+					this.filterInfoValue.currentMonth = ''
+					this.filterInfoValue.currentDay = ''
+				}
+				if (this.filterInfoValue.currentMonth.length <= 0) {
+					this.filterInfoValue.currentDay = ''
+				}
 				this.filterIssueList()
 			}
 		}
@@ -271,6 +329,39 @@
 		flex-direction: column;
 	}
 
+	.total-amount-wrap {
+		height: 60px;
+		border-top: 1px solid  $u-border-color;
+		border-bottom: 1px solid  $u-border-color;
+		padding: 0 15px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		color: $u-content-color;
+		font-size: 14px;
+	}
+	.total-amount-wrap .rebate-wrap {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	.total-amount-wrap .text-top {
+		margin-bottom: 5px;
+	}
+	.total-amount-wrap .text-bottom {
+		font-size: 16px;
+		color: $u-content-color;
+		font-weight: bold;
+	}
+	.total-amount-wrap .finish-text {
+		color: $u-type-success;
+	}
+	.total-amount-wrap .unfinish-text {
+		color: $u-type-error;
+	}
+	
 	.no-data-wrap {
 		height: 100vh;
 		justify-content: center;

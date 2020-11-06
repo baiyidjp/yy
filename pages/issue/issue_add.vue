@@ -347,19 +347,40 @@
 				this.issue.companyServiceCharge = this.checkedCompany.serviceCharge
 				this.checkedChannelQuotationInfo = this.checkedChannel.channelCompanyInfoList.find(companyInfo => companyInfo.companyId ===
 					id)
-				this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
-				this.handleRebateInfoList()
+				if (this.checkedChannelQuotationInfo) {
+					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
+					this.handleRebateInfoList(false)
+				} else {
+					this.$refs.uToast.show({
+						title: '当前渠道未关联此税源地',
+						type: 'warning'
+					})
+				}
 				this.showCompanyPop = false
 			},
 			// 选择/改变 税源地服务费
 			onChangeCompanyServiceCharge(value) {
 				if (value === this.checkedCompany.serviceCharge) {
-					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
-					this.handleRebateInfoList(false)
+					if (this.checkedChannelQuotationInfo) {
+						this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPoint
+						this.handleRebateInfoList(false)
+					} else {
+						this.$refs.uToast.show({
+							title: '当前渠道未关联此税源地',
+							type: 'warning'
+						})
+					}
 				}
 				if (value === this.checkedCompany.serviceChargeSmall) {
-					this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPointSmall
-					this.handleRebateInfoList(true)
+					if (this.checkedChannelQuotationInfo) {
+						this.issue.channelQuotationPoint = this.checkedChannelQuotationInfo.quotationPointSmall
+						this.handleRebateInfoList(true)
+					} else {
+						this.$refs.uToast.show({
+							title: '当前渠道未关联此税源地',
+							type: 'warning'
+						})
+					}
 				}
 			},
 			// 处理数据 区别是否是小额
