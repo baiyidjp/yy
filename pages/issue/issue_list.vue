@@ -2,18 +2,20 @@
 	<block v-if="issueList.length > 0">
 		<view class="wrap">
 			<view class="dropdowns-wrap">
-				<u-dropdown :height="'40px'" @open="onOpenDropdwonItem">
+				<u-dropdown :height="'40px'" @open="onOpenDropdwonItem" @close="onCloseDropdwonItem">
 					<u-dropdown-item v-model="filterInfoValue.currentYear" :title="filterInfoLabel.year" :options="issueYears" :height="dropdownItemListHeight"></u-dropdown-item>
-					<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths" :height="dropdownItemListHeight"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentMonth" :title="filterInfoLabel.month" :options="issueMonths"
+					 :height="dropdownItemListHeight"></u-dropdown-item>
 					<u-dropdown-item v-model="filterInfoValue.currentDay" :title="filterInfoLabel.day" :options="issueDays" :height="dropdownItemListHeight"></u-dropdown-item>
-					<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses" :height="dropdownItemListHeight"></u-dropdown-item>
+					<u-dropdown-item v-model="filterInfoValue.currentRebateStatus" :title="filterInfoLabel.rebateStatus" :options="issueRebateStatuses"
+					 :height="dropdownItemListHeight"></u-dropdown-item>
 				</u-dropdown>
 			</view>
-			<block v-for="(issue, index) in issueList" :key="issue._id">
+			<block v-for="(issue, index) in showIssueList" :key="issue._id">
 				<issue-item :issue="issue" @delete="onClickDelete(issue)"></issue-item>
 			</block>
 			<view class="buttons-wrap">
-<!-- 				<view class="button-icon" @click="onClickFilterButton">
+				<!-- 				<view class="button-icon" @click="onClickFilterButton">
 					<u-icon name="list" color="#ffffff" size="60"></u-icon>
 				</view> -->
 				<view class="button-icon" @click="onClickAddButton">
@@ -27,7 +29,7 @@
 	</block>
 	<block v-else>
 		<view class="wrap no-data-wrap">
-			<text>当前账号没有添加业务单</text>
+			<text>当前状态暂无业务单</text>
 			<u-button type="primary" @click="onClickAddButton">添加</u-button>
 		</view>
 	</block>
@@ -42,6 +44,7 @@
 	export default {
 		data() {
 			return {
+				showIssueList: [],
 				showDeleteModal: false,
 				deleteIssue: null,
 				dropdownItemListHeight: 'auto',
@@ -77,15 +80,16 @@
 		},
 		onLoad() {
 			this.issueRebateStatuses = [{
-					label: '全部',
-					value: '',
-				}, {
-					label: '已完成',
-					value: 'finish',
-				}, {
-					label: '未完成',
-					value: 'unfinish',
-				}]
+				label: '全部',
+				value: '',
+			}, {
+				label: '已完成',
+				value: 'finish',
+			}, {
+				label: '未完成',
+				value: 'unfinish',
+			}]
+			this.filterIssueList()
 		},
 		onShow() {
 			const defaultObj = {
@@ -100,7 +104,7 @@
 				}
 			})
 			this.issueYears = [defaultObj, ...years]
-			
+
 			const months = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.month)])).sort().map(month => {
 				return {
 					label: month,
@@ -108,7 +112,7 @@
 				}
 			})
 			this.issueMonths = [defaultObj, ...months]
-			
+
 			const days = Array.from(new Set([...allRebateDataInfo.map(dateInfo => dateInfo.day)])).sort().map(day => {
 				return {
 					label: day,
@@ -153,6 +157,43 @@
 		},
 		methods: {
 			...mapMutations(['DELETEISSUE', 'UPDATEISSUELIST']),
+			filterIssueList() {
+				const self = this
+				this.showIssueList = this.issueList
+				if (this.filterInfoValue.currentYear.length > 0) {
+					this.showIssueList = this.showIssueList.filter(issue => {
+						const filterRebateInfo = issue.rebateInfoList.filter(rebate => rebate.year === self.filterInfoValue.currentYear)
+						return filterRebateInfo && filterRebateInfo.length > 0 ? true : false
+					})
+				}
+				if (this.filterInfoValue.currentMonth.length > 0) {
+					this.showIssueList = this.showIssueList.filter(issue => {
+						const filterRebateInfo = issue.rebateInfoList.filter(rebate => rebate.month === self.filterInfoValue.currentMonth)
+						return filterRebateInfo && filterRebateInfo.length > 0 ? true : false
+					})
+				}
+				if (this.filterInfoValue.currentDay.length > 0) {
+					this.showIssueList = this.showIssueList.filter(issue => {
+						const filterRebateInfo = issue.rebateInfoList.filter(rebate => rebate.day === self.filterInfoValue.currentDay)
+						return filterRebateInfo && filterRebateInfo.length > 0 ? true : false
+					})
+				}
+				if (this.filterInfoValue.currentRebateStatus.length > 0) {
+					let finish = true
+					if (this.filterInfoValue.currentRebateStatus === 'unfinish') {
+						finish = false
+					}
+					this.showIssueList = this.showIssueList.filter(issue => {
+						return issue.issueFinish === finish
+					})
+				}
+				if (this.showIssueList.length === 0) {
+					self.$refs.uToast.show({
+						title: '查询不到当前状态的业务单',
+						type: 'warning'
+					})
+				}
+			},
 			onClickAddButton() {
 				uni.navigateTo({
 					url: './issue_add'
@@ -203,7 +244,8 @@
 				}
 			},
 			onOpenDropdwonItem(index) {
-				const height = getApp().globalData.screenHeight - getApp().globalData.navigationBarHeight - 40 - getApp().globalData.bottomArea - 50
+				const height = getApp().globalData.screenHeight - getApp().globalData.navigationBarHeight - 40 - getApp().globalData
+					.bottomArea - 50
 				if (index === 0 && this.issueYears.length * 53 > height) {
 					this.dropdownItemListHeight = `${height}px`
 				} else if (index === 1 && this.issueMonths.length * 53 > height) {
@@ -215,6 +257,9 @@
 				} else {
 					this.dropdownItemListHeight = 'auto'
 				}
+			},
+			onCloseDropdwonItem() {
+				this.filterIssueList()
 			}
 		}
 	}
